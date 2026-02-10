@@ -20,13 +20,24 @@ class MovieController extends Controller
         $this->movieService = $movieService;
     }
 
+    private function prepareMovieData(Request $request): array
+    {
+        $validated = $request->validated();
 
-    public function index(Request $request)
+        return array_merge($validated, [
+            'image_file' => $request->file('image'),
+            'remove_image' => $request->boolean('remove_image')
+        ]);
+    }
+
+    public function index(Request $request): View
     {
         $movies = $this->movieService->listAdmin(
             $request->get('search'),
             $request->get('status')
         );
+
+        $movies->appends($request->only(['search', 'status']));
 
         return view('admin.movies.index', compact('movies'));
     }
@@ -40,30 +51,34 @@ class MovieController extends Controller
 
     public function store(StoreMovieRequest $request): RedirectResponse
     {
+        $data = $this->prepareMovieData($request);
+
         $this->authorize('create', Movie::class);
 
-        $this->movieService->store($request->validated());
+        $this->movieService->store($data);
 
         return redirect()->route('admin.movies.index')->with('success', 'Movie created successfully');
     }
 
-    public function edit(Movie $movie)
+    public function edit(Movie $movie): View
     {
         $this->authorize('update', $movie);
 
         return view('admin.movies.edit', compact('movie'));
     }
 
-    public function update(UpdateMovieRequest $request, Movie $movie)
+    public function update(UpdateMovieRequest $request, Movie $movie): RedirectResponse
     {
+        $data = $this->prepareMovieData($request);
+
         $this->authorize('update', $movie);
 
-        $this->movieService->update($movie, $request->validated());
+        $this->movieService->update($movie, $data);
 
         return redirect()->route('admin.movies.index')->with('success', 'Movie updated successfully');
     }
 
-    public function destroy(Movie $movie)
+    public function destroy(Movie $movie): RedirectResponse
     {
         $this->authorize('delete', $movie);
 

@@ -4,34 +4,38 @@ namespace App\Services;
 
 use App\Models\Director;
 use App\Models\Movie;
-use App\Repositories\Interfaces\MovieRepositoryInterface;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Gate;
 
 class MovieService
 {
-    public function listPublic(?string $search = null, int $perPage = 12)
+    public function listPublic(?string $search = null, int $perPage = 12): LengthAwarePaginator
     {
-        return Movie::where('status', 'published')
+        return Movie::with('director')
+            ->where('status', 'published')
             ->when($search, fn($q) =>
-                $q->where('title', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
+                $q->where(fn($q) =>
+                    $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
             )
-            ->paginate($perPage);
+        )
+        ->paginate($perPage);
     }
 
-    public function listAdmin(?string $search = null, ?string $status = null)
+    public function listAdmin(?string $search = null, ?string $status = null, int $perPage = 12): LengthAwarePaginator
     {
-        return Movie::query()
+        return Movie::with('director')
             ->when($status, fn($q) => $q->where('status', $status))
-            ->when($search, fn($q) => $q->where(fn($q) =>
-                $q->where('title', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
+            ->when($search, fn($q) =>
+                $q->where(fn($q) =>
+                    $q->where('title', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
                 )
             )
             ->latest('year')
-            ->get();
+            ->paginate($perPage);
     }
 
     public function store(array $data): Movie
@@ -47,7 +51,7 @@ class MovieService
 
         $filtered = [];
         foreach ($data as $field => $value) {
-            if (Gate::allows('updateField', [$movie, $field])) {
+            if ($field === 'image' || Gate::allows('updateField', [$movie, $field])) {
                 $filtered[$field] = $value;
             }
         }
@@ -66,9 +70,11 @@ class MovieService
 
     protected function prepareData(array $data, ?Movie $movie = null): array
     {
-        $director = Director::firstOrCreate(['name' => $data['director']]);
-        $data['director_id'] = $director->id;
-        unset($data['director']);
+        if(isset($data['director'])) {
+            $director = Director::firstOrCreate(['name' => $data['director']]);
+            $data['director_id'] = $director->id;
+            unset($data['director']);
+        }
 
         if (!isset($movie) || $movie->title !== $data['title']) {
             $slug = Str::slug($data['title']);
@@ -84,19 +90,19 @@ class MovieService
             $data['slug'] = $slug;
         }
 
-        if (request()->boolean('remove_image') && $movie?->image) {
+        if (!empty($data['remove_image']) && $movie?->image) {
             Storage::disk('public')->delete($movie->image);
             $data['image'] = null;
         }
 
-        if (request()->hasFile('image')) {
+        if (!empty($data['image_file'])) {
             if ($movie?->image) {
                 Storage::disk('public')->delete($movie->image);
             }
-            $data['image'] = request()->file('image')->store('admin', 'public');
+            $data['image'] = $data['image_file']->store('admin', 'public');
         }
 
-        if ($movie && !isset($data['image'])) {
+        if ($movie && !array_key_exists('image', $data)) {
             $data['image'] = $movie->image;
         }
 

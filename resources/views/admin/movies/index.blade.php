@@ -24,8 +24,8 @@
     @foreach ($movies as $movie)
         <div>
             <h3>{{ $movie->title }}</h3>
-            @if($movie?->image)
-                <img src="{{ $movie?->image_url }}"><br>
+            @if($movie->image)
+                <img src="{{ $movie->image_url }}"><br>
             @endif
             <b>Director: </b><p>{{ $movie->director->name ?? 'Unknown director'}}</p>
             <b>Description: </b><p>{{ $movie->description}}</p>
@@ -42,5 +42,8 @@
             <hr>
         </div>
     @endforeach
+    <div class="mt-8 flex justify-center">
+        {{ $movies->appends(request()->query())->links() }}
+    </div>
 
 @endsection
