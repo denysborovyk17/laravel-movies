@@ -12,12 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('movies', function (Blueprint $table) {
-            if (Schema::hasColumn('movies', 'created_at')) {    
-                $table->dropColumn('created_at');
-            }
-            if (Schema::hasColumn('movies', 'updated_at')) {
-                $table->dropColumn('updated_at');
-            }
+            $table->unsignedBigInteger('director_id')->nullable()->after('title');
+
+            $table->foreign('director_id')->references('id')->on('directors')->onDelete('set null');
         });
     }
 
@@ -27,7 +24,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('movies', function (Blueprint $table) {
-            $table->timestamps();
+            $table->dropForeign('director_id');
+            $table->dropColumn('director_id');
         });
     }
 };

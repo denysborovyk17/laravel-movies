@@ -16,9 +16,9 @@
 
         @if (isset($movie) && $movie?->image)
             <p>Current Image:</p>
-            <img src="{{ $movie?->image_url }}">
+            <img src="{{ $movie?->image_url }}" width="200" height="250">
             <input type="checkbox" name="remove_image" value="1">
-            Delete Image
+            [Delete Image]
         @endif
 
         <label>Director:</label>

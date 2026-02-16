@@ -9,7 +9,7 @@
     <h1>{{ $movie->title }}</h1>
 
     @if ($movie->image)
-        <img src="{{ $movie->image_url }}" alt="{{ $movie->title }}"><br>
+        <img src="{{ $movie->image_url }}" alt="{{ $movie->title }}" width="200" height="250"><br>
     @endif
 
     <b>Director: </b><p>{{ $movie->director->name ?? 'Unknown director'}}</p>

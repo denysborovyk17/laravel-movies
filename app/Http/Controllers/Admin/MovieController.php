@@ -16,9 +16,9 @@ class MovieController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct(MovieService $movieService) {
-        $this->movieService = $movieService;
-    }
+    public function __construct(
+        private MovieService $movieService
+    ) {}
 
     private function prepareMovieData(Request $request): array
     {
@@ -33,8 +33,8 @@ class MovieController extends Controller
     public function index(Request $request): View
     {
         $movies = $this->movieService->listAdmin(
-            $request->get('search'),
-            $request->get('status')
+            $request->input('search'),
+            $request->input('status')
         );
 
         $movies->appends($request->only(['search', 'status']));

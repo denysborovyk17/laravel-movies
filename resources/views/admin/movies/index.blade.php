@@ -25,7 +25,7 @@
         <div>
             <h3>{{ $movie->title }}</h3>
             @if($movie->image)
-                <img src="{{ $movie->image_url }}"><br>
+                <img src="{{ $movie->image_url }}" width="200" height="300"><br>
             @endif
             <b>Director: </b><p>{{ $movie->director->name ?? 'Unknown director'}}</p>
             <b>Description: </b><p>{{ $movie->description}}</p>
