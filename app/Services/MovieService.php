@@ -4,44 +4,32 @@ namespace App\Services;
 
 use App\Models\Director;
 use App\Models\Movie;
+use App\Repositories\Interfaces\MovieRepositoryInterface;
+use App\Services\Interfaces\MovieServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Gate;
 
-class MovieService
+class MovieService implements MovieServiceInterface
 {
-    public function listPublic(?string $search = null, int $perPage = 12): LengthAwarePaginator
+    public function __construct(
+        private MovieRepositoryInterface $movieRepository
+    ) {}
+
+    public function listPublic(?string $search, int $perPage = 12): LengthAwarePaginator
     {
-        return Movie::with('director')
-            ->where('status', 'published')
-            ->when($search, fn($q) =>
-                $q->where(fn($q) =>
-                    $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-            )
-        )
-        ->paginate($perPage);
+        return $this->movieRepository->listPublic($search, $perPage);
     }
 
-    public function listAdmin(?string $search = null, ?string $status = null, int $perPage = 12): LengthAwarePaginator
+    public function listAdmin(?string $search, string $status, int $perPage = 12): LengthAwarePaginator
     {
-        return Movie::with('director')
-            ->when($status, fn($q) => $q->where('status', $status))
-            ->when($search, fn($q) =>
-                $q->where(fn($q) =>
-                    $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                )
-            )
-            ->latest('year')
-            ->paginate($perPage);
+        return $this->movieRepository->listAdmin($search, $status, $perPage);
     }
-
+    
     public function store(array $data): Movie
     {
         $data = $this->prepareData($data);
-
         return Movie::create($data);
     }
 

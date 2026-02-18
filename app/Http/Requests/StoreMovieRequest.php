@@ -31,7 +31,7 @@ class StoreMovieRequest extends FormRequest
             'genre' => 'required|string|max:255',
             'rating' => 'required|integer|min:0|max:10',
             'status' => 'required|in:' . implode(',', array_map(fn($s) => $s->value, MovieStatus::cases())),
-            'image' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ];
     }
 

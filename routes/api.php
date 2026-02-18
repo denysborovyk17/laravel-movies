@@ -20,3 +20,7 @@ Route::prefix('auth')->group(function (): void {
 
 Route::get('movies', [MovieController::class, 'index']);
 Route::get('movies/{id}', [MovieController::class, 'show']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::apiResource('movies', MovieController::class)->except('create', 'edit');
+});
