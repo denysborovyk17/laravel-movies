@@ -2,9 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Validation\Rule;
 use App\Enums\MovieStatus;
+use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rules\Enum;
 
 class UpdateMovieRequest extends FormRequest
 {
@@ -31,7 +32,7 @@ class UpdateMovieRequest extends FormRequest
             'year' => 'required|integer|min:1900|max:2050',
             'genre' => 'required|string|max:255',
             'rating' => 'required|integer|min:0|max:10',
-            'status' => ['required', Rule::in(array_map(fn($s) => $s->value, MovieStatus::cases()))],
+            'status' => ['required', new Enum(MovieStatus::class)],
             'image' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
             'remove_image' => 'sometimes|boolean'
         ];
