@@ -17,7 +17,7 @@ class MovieController extends Controller
 
     public function index(Request $request): View
     {
-        $movies = $this->movieService->listPublic($request->get('search'), 12);
+        $movies = $this->movieService->listPublic($request->input('search'), 12);
 
         return view('movies.index', compact('movies'));
     }
