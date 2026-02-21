@@ -22,7 +22,7 @@ class MovieService implements MovieServiceInterface
         return $this->movieRepository->listPublic($search, $perPage);
     }
 
-    public function listAdmin(?string $search, string $status, int $perPage = 12): LengthAwarePaginator
+    public function listAdmin(?string $search, ?string $status, int $perPage = 12): LengthAwarePaginator
     {
         return $this->movieRepository->listAdmin($search, $status, $perPage);
     }
