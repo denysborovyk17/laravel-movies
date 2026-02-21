@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Enums\MovieStatus;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Movie extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['title', 'slug', 'image', 'description', 'year', 'genre', 'rating', 'status', 'director_id'];
 
     protected $casts = [
