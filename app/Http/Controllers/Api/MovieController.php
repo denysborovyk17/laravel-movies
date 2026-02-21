@@ -7,8 +7,10 @@ use App\Http\Requests\StoreMovieRequest;
 use App\Http\Requests\UpdateMovieRequest;
 use App\Http\Resources\MovieCollection;
 use App\Http\Resources\MovieResource;
+use App\Models\Director;
 use App\Services\Interfaces\ApiMovieServiceInterface;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Gate;
 
 class MovieController extends Controller
 {
@@ -32,10 +34,16 @@ class MovieController extends Controller
         return new MovieResource($movie);
     }
 
-    public function store(StoreMovieRequest $request): MovieResource
+    public function store(StoreMovieRequest $request, int $id): MovieResource
     {
+        $movie = $this->movieApiService->getByIdApi($id);
+
+        Gate::authorize('update', $movie);
+    
         $data = $request->validated();
-        $data['director_id'] = auth()->id();
+
+        $director = Director::firstOrCreate(['name' => $data['director']]);
+        $data['director_id'] = $director->id;
 
         $movie = $this->movieApiService->createApi($data);
 
@@ -44,6 +52,10 @@ class MovieController extends Controller
 
     public function update(UpdateMovieRequest $request, int $id): MovieResource | JsonResponse
     {
+        $movie = $this->movieApiService->getByIdApi($id);
+
+        Gate::authorize('update', $movie);
+    
         $movie = $this->movieApiService->updateApi($id, $request->validated());
 
         if (!$movie) return response()->json(['message' => 'Movie not found'], 404);
@@ -53,6 +65,10 @@ class MovieController extends Controller
 
     public function destroy(int $id): JsonResponse
     {
+        $movie = $this->movieApiService->getByIdApi($id);
+
+        Gate::authorize('update', $movie);
+    
         $deleted = $this->movieApiService->deleteApi($id);
 
         if (!$deleted) return response()->json(['message' => 'Movie not found'], 404);
