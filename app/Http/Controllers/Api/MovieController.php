@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreMovieRequest;
 use App\Http\Requests\UpdateMovieRequest;
+use App\Http\Resources\MovieCollection;
+use App\Http\Resources\MovieResource;
 use App\Services\Interfaces\ApiMovieServiceInterface;
 use Illuminate\Http\JsonResponse;
 
@@ -14,35 +16,39 @@ class MovieController extends Controller
         private ApiMovieServiceInterface $movieApiService
     ) {}
 
-    public function index(): JsonResponse
+    public function index(): MovieCollection
     {
-        return response()->json($this->movieApiService->getAllApi());
+        $movies = $this->movieApiService->getAllApi();
+    
+        return new MovieCollection($movies);
     }
 
-    public function show(int $id): JsonResponse
+    public function show(int $id): MovieResource | JsonResponse
     {
         $movie = $this->movieApiService->getByIdApi($id);
         
         if (!$movie) return response()->json(['message' => 'Movie not found'], 404);
 
-        return response()->json($movie);
+        return new MovieResource($movie);
     }
 
-    public function store(StoreMovieRequest $request): JsonResponse
+    public function store(StoreMovieRequest $request): MovieResource
     {
         $data = $request->validated();
         $data['director_id'] = auth()->id();
 
-        return response()->json($this->movieApiService->createApi($request->validated()), 201);
+        $movie = $this->movieApiService->createApi($data);
+
+        return new MovieResource($movie);
     }
 
-    public function update(UpdateMovieRequest $request, int $id): JsonResponse
+    public function update(UpdateMovieRequest $request, int $id): MovieResource | JsonResponse
     {
         $movie = $this->movieApiService->updateApi($id, $request->validated());
 
         if (!$movie) return response()->json(['message' => 'Movie not found'], 404);
 
-        return response()->json($movie);
+        return new MovieResource($movie);
     }
 
     public function destroy(int $id): JsonResponse
