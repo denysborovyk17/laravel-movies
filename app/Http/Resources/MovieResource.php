@@ -17,7 +17,7 @@ class MovieResource extends BaseResource
             'genre' => $this->genre,
             'rating' => $this->rating,
             'status' => $this->status,
-            'admin_only' => $this->mergeWhen($request->user()->role->value === 'admin', [
+            'admin_only' => $this->mergeWhen($request->user()?->role->value === 'admin', [
                 'ip' => $this->ip_address
             ])
         ];
