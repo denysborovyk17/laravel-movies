@@ -7,6 +7,7 @@ use App\Models\Movie;
 use App\Repositories\Interfaces\MovieRepositoryInterface;
 use App\Services\Interfaces\ApiMovieServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class ApiMovieService implements ApiMovieServiceInterface
@@ -17,12 +18,16 @@ class ApiMovieService implements ApiMovieServiceInterface
 
     public function getAllApi(): Collection
     {
-        return $this->movieRepository->allApi();
+        return Cache::remember('movies_all', 60, function () {
+            return $this->movieRepository->allApi();
+        });
     }
 
     public function getByIdApi(int $id): ?Movie
     {
-        return $this->movieRepository->findApi($id);
+        return Cache::remember("movies_{$id}", 60, function () use ($id) {
+            return $this->movieRepository->findApi($id);
+        });
     }
 
     public function createApi(array $data): Movie
@@ -34,7 +39,15 @@ class ApiMovieService implements ApiMovieServiceInterface
     
         $slug = Str::slug($data['title']);
         $data['slug'] = $slug;
-        return $this->movieRepository->createApi($data);
+        $movie = $this->movieRepository->createApi($data);
+
+        Cache::forget('movies_all');
+
+        $id = $movie->id;
+
+        return Cache::tags(['movies'])->remember("movie_{$id}", 120, function () use ($id) {
+            return $this->movieRepository->findApi($id);
+        });
     }
 
     public function updateApi(int $id, array $data): ?Movie
@@ -44,7 +57,10 @@ class ApiMovieService implements ApiMovieServiceInterface
 
         $slug = Str::slug($data['title']);
         $data['slug'] = $slug;
-        return $this->movieRepository->updateApi($movie, $data);
+        $updatedMovie = $this->movieRepository->updateApi($movie, $data);
+
+        Cache::forget('movies_all');
+        return $updatedMovie;
     }
 
     public function deleteApi(int $id): bool
@@ -52,6 +68,9 @@ class ApiMovieService implements ApiMovieServiceInterface
         $movie = $this->movieRepository->findApi($id);
         if (!$movie) return false;
 
-        return $this->movieRepository->deleteApi($movie);
+        $deletedMovie = $this->movieRepository->deleteApi($movie);
+        Cache::forget('movies_all');
+
+        return $deletedMovie;
     }
 }
