@@ -9,8 +9,6 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 class MovieRepository implements MovieRepositoryInterface
 {
-    public function __construct() {}
-
     public function listPublic(?string $search = null, int $perPage = 12): LengthAwarePaginator
     {
         return Movie::with('director')
@@ -60,8 +58,30 @@ class MovieRepository implements MovieRepositoryInterface
         return $movie;
     }
 
-    public function deleteApi(Movie $movie): bool
+    public function softDelete(Movie $movie): bool
     {
         return $movie->delete();
+    }
+
+    public function restore(int $id): ?Movie
+    {
+        $movie = Movie::onlyTrashed()->find($id);
+        if (!$movie) return null;
+
+        $movie->restore();
+        return $movie;
+    }
+
+    public function forceDelete(int $id): bool
+    {
+        $movie = Movie::find($id);
+        if (!$movie) return false;
+
+        return $movie->forceDelete();
+    }
+
+    public function getTrashed(): Collection
+    {
+        return Movie::onlyTrashed()->get();
     }
 }

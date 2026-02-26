@@ -20,5 +20,11 @@ interface MovieRepositoryInterface
 
     public function updateApi(Movie $movie, array $data): Movie;
 
-    public function deleteApi(Movie $movie): bool;
+    public function softDelete(Movie $movie): bool;
+
+    public function restore(int $id): ?Movie;
+
+    public function forceDelete(int $id): bool;
+
+    public function getTrashed(): Collection;
 }

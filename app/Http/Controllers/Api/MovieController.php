@@ -9,6 +9,7 @@ use App\Http\Resources\MovieCollection;
 use App\Http\Resources\MovieResource;
 use App\Models\Director;
 use App\Services\Interfaces\ApiMovieServiceInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 
@@ -22,6 +23,13 @@ class MovieController extends Controller
     {
         $movies = $this->movieApiService->getAllApi();
     
+        return new MovieCollection($movies);
+    }
+
+    public function trashed(): MovieCollection
+    {
+        $movies = $this->movieApiService->getTrashed();
+
         return new MovieCollection($movies);
     }
 
@@ -69,10 +77,32 @@ class MovieController extends Controller
 
         Gate::authorize('update', $movie);
     
-        $deleted = $this->movieApiService->deleteApi($id);
+        $deleted = $this->movieApiService->softDeleteApi($id);
 
         if (!$deleted) return response()->json(['message' => 'Movie not found'], 404);
 
         return response()->json(['message' => 'Deleted']);
+    }
+
+    public function restore(int $id): JsonResponse
+    {
+        $result = $this->movieApiService->restoreApi($id);
+
+        if (!$result) {
+            return response()->json(['success' => false, 'message' => 'Not found'], 404);
+        }
+
+        return response()->json(['success' => true]);
+    }
+
+    public function forceDelete(int $id): JsonResponse
+    {
+        $deleted = $this->movieApiService->forceDeleteApi($id);
+
+        if (!$deleted) {
+            return response()->json(['success' => false, 'message' => 'Not found'], 404);
+        }
+
+        return response()->json(['success' => true]);
     }
 }

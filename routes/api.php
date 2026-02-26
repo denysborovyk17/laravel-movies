@@ -1,26 +1,22 @@
 <?php
 
-use Illuminate\Http\Request;
-use App\Http\Controllers\Api\LoginController;
-use App\Http\Controllers\Api\LogoutController;
+use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\MovieController;
-use App\Http\Controllers\Api\RegisterController;
-use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function (): void {
-    Route::post('register', [RegisterController::class, 'register']);
-    Route::post('login', [LoginController::class, 'login']);
+    Route::post('register', [AuthController::class, 'register']);
+    Route::post('login', [AuthController::class, 'login']);
 
     Route::middleware('auth:sanctum')->group(function (): void {
-        Route::get('me', [UserController::class, 'me']);
-        Route::post('logout', [LogoutController::class, 'logout']);
+        Route::get('me', [AuthController::class, 'me']);
+        Route::post('logout', [AuthController::class, 'logout']);
     });
 });
 
-Route::get('movies', [MovieController::class, 'index']);
-Route::get('movies/{id}', [MovieController::class, 'show']);
-
 Route::middleware('auth:sanctum')->group(function () {
+    Route::get('/movies/trashed', [MovieController::class, 'trashed']);
     Route::apiResource('movies', MovieController::class)->except('create', 'edit');
+    Route::post('/movies/{id}/restore', [MovieController::class, 'restore']);
+    Route::delete('/movies/{id}/force', [MovieController::class, 'forceDelete']);
 });

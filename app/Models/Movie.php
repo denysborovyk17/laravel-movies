@@ -5,10 +5,11 @@ namespace App\Models;
 use App\Enums\MovieStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Movie extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = ['title', 'slug', 'image', 'description', 'year', 'genre', 'rating', 'status', 'director_id'];
 
@@ -37,5 +38,4 @@ class Movie extends Model
 
         return $query->where('status', MovieStatus::PUBLISHED);
     }
-
 }

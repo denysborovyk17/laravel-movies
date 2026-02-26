@@ -23,6 +23,13 @@ class ApiMovieService implements ApiMovieServiceInterface
         });
     }
 
+    public function getTrashed(): Collection
+    {
+        return Cache::remember('movies_trash', 60, function () {
+            return $this->movieRepository->getTrashed();
+        });
+    }
+
     public function getByIdApi(int $id): ?Movie
     {
         return Cache::remember("movies_{$id}", 60, function () use ($id) {
@@ -63,14 +70,38 @@ class ApiMovieService implements ApiMovieServiceInterface
         return $updatedMovie;
     }
 
-    public function deleteApi(int $id): bool
+    public function softDeleteApi(int $id): bool
     {
         $movie = $this->movieRepository->findApi($id);
         if (!$movie) return false;
 
-        $deletedMovie = $this->movieRepository->deleteApi($movie);
+        $deletedMovie = $this->movieRepository->softDelete($movie);
+
         Cache::forget('movies_all');
+        Cache::forget("movies_{$id}");
 
         return $deletedMovie;
+    }
+
+    public function restoreApi(int $id): ?Movie
+    {
+        $movie = $this->movieRepository->restore($id);
+        if (!$movie) return null;
+
+        Cache::forget('movies_all');
+        Cache::forget("movies_{$id}");
+
+        return $movie;
+    }
+
+    public function forceDeleteApi(int $id): bool
+    {
+        $deleted = $this->movieRepository->forceDelete($id);
+        if (!$deleted) return false;
+
+        Cache::forget('movies_all');
+        Cache::forget("movies_{$id}");
+
+        return true;
     }
 }
