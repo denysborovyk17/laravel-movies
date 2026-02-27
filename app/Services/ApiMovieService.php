@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\ApiException;
 use App\Models\Director;
 use App\Models\Movie;
 use App\Repositories\Interfaces\MovieRepositoryInterface;
@@ -33,7 +34,13 @@ class ApiMovieService implements ApiMovieServiceInterface
     public function getByIdApi(int $id): ?Movie
     {
         return Cache::remember("movies_{$id}", 60, function () use ($id) {
-            return $this->movieRepository->findApi($id);
+            $movie = $this->movieRepository->findApi($id);
+
+            if (!$movie) {
+                throw new ApiException("Movie with ID $id not found", 404);
+            }
+
+            return $movie;
         });
     }
 
