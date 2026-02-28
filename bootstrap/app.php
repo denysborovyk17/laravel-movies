@@ -1,12 +1,15 @@
 <?php
 
 use App\Exceptions\ApiException;
+use App\Http\Middleware\IsAdmin;
+use App\Http\Middleware\RequestIdMiddleware;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -18,10 +21,34 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'isAdmin' => \App\Http\Middleware\IsAdmin::class
+            'isAdmin' => IsAdmin::class
         ]);
+        $middleware->append(RequestIdMiddleware::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        $exceptions->report(function (ApiException $e): bool {
+            if ($e->status >= 400 && $e->status < 500) {
+                return false;
+            }
+
+            Log::error('Api Exception', [
+                'message' => $e->getMessage(),
+                'status' => $e->status,
+                'errors' => $e->errors
+            ]);
+
+            return true;
+        });
+
+        $exceptions->report(function (Throwable $e): bool {
+            Log::error('Unhandled exception', [
+                'type' => get_class($e),
+                'message' => $e->getMessage()
+            ]);
+
+            return true;
+        });
+    
         $exceptions->render(function (ApiException $e) {
             return response()->json([
                 'success' => false,
