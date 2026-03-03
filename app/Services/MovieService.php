@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Gate;
 class MovieService implements MovieServiceInterface
 {
     public function __construct(
-        private MovieRepositoryInterface $movieRepository
+        private readonly MovieRepositoryInterface $movieRepository
     ) {}
 
     public function listPublic(?string $search, int $perPage = 12): LengthAwarePaginator
