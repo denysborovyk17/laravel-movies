@@ -11,7 +11,7 @@ use Illuminate\View\View;
 class MovieController extends Controller
 {
     public function __construct(
-        private MovieService $movieService
+        private readonly MovieService $movieService
     ) {}
 
 

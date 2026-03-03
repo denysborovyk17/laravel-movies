@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Gate;
 class MovieController extends Controller
 {
     public function __construct(
-        private ApiMovieServiceInterface $movieApiService
+        private readonly ApiMovieServiceInterface $movieApiService
     ) {}
 
     public function index(): MovieCollection
