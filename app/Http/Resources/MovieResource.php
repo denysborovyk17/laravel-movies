@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 
-class MovieResource extends BaseResource
+class MovieResource extends MovieBaseResource
 {
     public function toArray(Request $request): array
     {
