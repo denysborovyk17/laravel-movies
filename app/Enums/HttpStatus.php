@@ -73,4 +73,19 @@ enum HttpStatus: int
     case LOOP_DETECTED = 508;
     case NOT_EXTENDED = 510;
     case NETWORK_AUTHENTICATION_REQUIRED = 511;
+
+    public function isSuccess(): bool
+    {
+        return $this->value >= 200 && $this->value < 300;
+    }
+
+    public function isClientError(): bool
+    {
+        return $this->value >= 400 && $this->value < 500;
+    }
+
+    public function isServerError(): bool
+    {
+        return $this->value >= 500;
+    }
 }
