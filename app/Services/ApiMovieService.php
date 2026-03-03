@@ -14,7 +14,7 @@ use Illuminate\Support\Str;
 class ApiMovieService implements ApiMovieServiceInterface
 {
     public function __construct(
-        private MovieRepositoryInterface $movieRepository
+        private readonly MovieRepositoryInterface $movieRepository
     ) {}
 
     public function getAllApi(): Collection
@@ -31,7 +31,7 @@ class ApiMovieService implements ApiMovieServiceInterface
         });
     }
 
-    public function getByIdApi(int $id): ?Movie
+    public function getByIdApi(int $id): Movie|null
     {
         return Cache::remember("movies_{$id}", 60, function () use ($id) {
             $movie = $this->movieRepository->findApi($id);
@@ -64,10 +64,12 @@ class ApiMovieService implements ApiMovieServiceInterface
         });
     }
 
-    public function updateApi(int $id, array $data): ?Movie
+    public function updateApi(int $id, array $data): Movie|null
     {
         $movie = $this->movieRepository->findApi($id);
-        if (!$movie) return null;
+        if (!$movie) {
+            return null;
+        }
 
         $slug = Str::slug($data['title']);
         $data['slug'] = $slug;
@@ -80,7 +82,9 @@ class ApiMovieService implements ApiMovieServiceInterface
     public function softDeleteApi(int $id): bool
     {
         $movie = $this->movieRepository->findApi($id);
-        if (!$movie) return false;
+        if (!$movie) {
+            return false;
+        }
 
         $deletedMovie = $this->movieRepository->softDelete($movie);
 
@@ -90,10 +94,12 @@ class ApiMovieService implements ApiMovieServiceInterface
         return $deletedMovie;
     }
 
-    public function restoreApi(int $id): ?Movie
+    public function restoreApi(int $id): Movie|null
     {
         $movie = $this->movieRepository->restore($id);
-        if (!$movie) return null;
+        if (!$movie) {
+            return null;
+        }
 
         Cache::forget('movies_all');
         Cache::forget("movies_{$id}");
@@ -104,7 +110,9 @@ class ApiMovieService implements ApiMovieServiceInterface
     public function forceDeleteApi(int $id): bool
     {
         $deleted = $this->movieRepository->forceDelete($id);
-        if (!$deleted) return false;
+        if (!$deleted) {
+            return false;
+        }
 
         Cache::forget('movies_all');
         Cache::forget("movies_{$id}");
