@@ -73,9 +73,10 @@ class MovieService implements MovieServiceInterface
             $counter = 1;
 
             while (Movie::where('slug', $slug)
-                ->when($movie, fn ($q) => $q->where('id', '!=', $movie->id))
-                ->exists()) {
-                $slug = $original.'-'.$counter++;
+                ->when($movie, fn($q) => $q->where('id', '!=', $movie->id))
+                ->exists()
+            ) {
+                $slug = $original . '-' . $counter++;
             }
 
             $data['slug'] = $slug;
