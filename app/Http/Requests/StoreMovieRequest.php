@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use App\Enums\MovieStatus;
@@ -62,7 +64,7 @@ class StoreMovieRequest extends FormRequest
             'status.required' => 'Статус фільму обов\'язковий',
             'image.image' => 'Файл має бути зображенням',
             'image.mimes' => 'Допустимі типи зображень: jpeg, png, jpg, webp',
-            'image.max' => 'Максимальний розмір файлу 2 МБ'
+            'image.max' => 'Максимальний розмір файлу 2 МБ',
         ];
     }
 }

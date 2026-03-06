@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Admin\MovieController as AdminMovieController;
-use App\Http\Controllers\MovieController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LogoutController;
-use Illuminate\Foundation\Auth\EmailVerificationRequest;
-use Illuminate\Http\Request;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\MovieController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => redirect()->route('movies.index'))->name('index');

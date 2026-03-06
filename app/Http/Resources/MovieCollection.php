@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -10,12 +12,12 @@ class MovieCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection->map(fn($movie) => [
+            'data' => $this->collection->map(fn ($movie) => [
                 'id' => $movie->id,
                 'title' => $movie->title,
                 'slug' => $movie->slug,
-                'description' => $movie->description
-            ])
+                'description' => $movie->description,
+            ]),
         ];
     }
 }

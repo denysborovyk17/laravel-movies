@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
@@ -15,6 +17,7 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember_me'))) {
             $request->session()->regenerate();
+
             return redirect()->intended('movies');
         }
 

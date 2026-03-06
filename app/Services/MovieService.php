@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Models\Director;
@@ -7,9 +9,9 @@ use App\Models\Movie;
 use App\Repositories\Interfaces\MovieRepositoryInterface;
 use App\Services\Interfaces\MovieServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Gate;
 
 class MovieService implements MovieServiceInterface
 {
@@ -26,10 +28,11 @@ class MovieService implements MovieServiceInterface
     {
         return $this->movieRepository->listAdmin($search, $status, $perPage);
     }
-    
+
     public function store(array $data): Movie
     {
         $data = $this->prepareData($data);
+
         return Movie::create($data);
     }
 
@@ -58,43 +61,42 @@ class MovieService implements MovieServiceInterface
 
     protected function prepareData(array $data, ?Movie $movie = null): array
     {
-        if(isset($data['director'])) {
+        if (isset($data['director'])) {
             $director = Director::firstOrCreate(['name' => $data['director']]);
             $data['director_id'] = $director->id;
             unset($data['director']);
         }
 
-        if (!isset($movie) || $movie->title !== $data['title']) {
+        if (! isset($movie) || $movie->title !== $data['title']) {
             $slug = Str::slug($data['title']);
             $original = $slug;
             $counter = 1;
 
             while (Movie::where('slug', $slug)
-                ->when($movie, fn($q) => $q->where('id', '!=', $movie->id))
+                ->when($movie, fn ($q) => $q->where('id', '!=', $movie->id))
                 ->exists()) {
-                $slug = $original . '-' . $counter++;
+                $slug = $original.'-'.$counter++;
             }
 
             $data['slug'] = $slug;
         }
 
-        if (!empty($data['remove_image']) && $movie?->image) {
+        if (! empty($data['remove_image']) && $movie?->image) {
             Storage::disk('public')->delete($movie->image);
             $data['image'] = null;
         }
 
-        if (!empty($data['image_file'])) {
+        if (! empty($data['image_file'])) {
             if ($movie?->image) {
                 Storage::disk('public')->delete($movie->image);
             }
             $data['image'] = $data['image_file']->store('admin', 'public');
         }
 
-        if ($movie && !array_key_exists('image', $data)) {
+        if ($movie && ! array_key_exists('image', $data)) {
             $data['image'] = $movie->image;
         }
 
         return $data;
     }
-
 }

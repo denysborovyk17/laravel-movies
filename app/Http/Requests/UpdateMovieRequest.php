@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use App\Enums\MovieStatus;
-use App\Enums\UserRole;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
 
@@ -34,7 +35,7 @@ class UpdateMovieRequest extends FormRequest
             'rating' => 'required|integer|min:0|max:10',
             'status' => ['required', new Enum(MovieStatus::class)],
             'image' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
-            'remove_image' => 'sometimes|boolean'
+            'remove_image' => 'sometimes|boolean',
         ];
     }
 
@@ -64,7 +65,7 @@ class UpdateMovieRequest extends FormRequest
             'status.required' => 'Статус фільму обов\'язковий',
             'image.image' => 'Файл має бути зображенням',
             'image.mimes' => 'Допустимі типи зображень: jpeg, png, jpg, webp',
-            'image.max' => 'Максимальний розмір файлу 2 МБ'
+            'image.max' => 'Максимальний розмір файлу 2 МБ',
         ];
     }
 }

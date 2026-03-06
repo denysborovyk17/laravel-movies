@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Exceptions\ApiException;
 use App\Http\Middleware\IsAdmin;
 use App\Http\Middleware\RequestIdMiddleware;
@@ -23,7 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
-            'isAdmin' => IsAdmin::class
+            'isAdmin' => IsAdmin::class,
         ]);
         $middleware->append(RequestIdMiddleware::class);
     })
@@ -36,7 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             Log::error('Api Exception', [
                 'message' => $e->getMessage(),
                 'status' => $e->status,
-                'errors' => $e->errors
+                'errors' => $e->errors,
             ]);
 
             return true;
@@ -45,7 +47,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->report(function (Throwable $e): bool {
             Log::error('Unhandled exception', [
                 'type' => get_class($e),
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ]);
 
             return true;
@@ -57,22 +59,22 @@ return Application::configure(basePath: dirname(__DIR__))
                 'message' => 'Too many requests. Please try again later.',
             ], 429);
         });
-    
+
         $exceptions->render(function (ApiException $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-                'errors' => $e->errors
+                'errors' => $e->errors,
             ], $e->status);
         });
 
         $exceptions->render(function (ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Resource not found'
+                'message' => 'Resource not found',
             ]);
         });
-        
+
         $exceptions->render(function (AuthorizationException $e) {
             return response()->json([
                 'success' => false,
@@ -91,14 +93,14 @@ return Application::configure(basePath: dirname(__DIR__))
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
-                'errors' => $e->errors()
+                'errors' => $e->errors(),
             ], 422);
         });
 
         $exceptions->render(function (Throwable $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 500);
         });
     })->create();

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories\Interfaces;
 
 use App\Models\Movie;
@@ -10,11 +12,11 @@ interface MovieRepositoryInterface
 {
     public function listPublic(?string $search, int $perPage): LengthAwarePaginator;
 
-    public function listAdmin(?string $search = null, ?string $status, int $perPage): LengthAwarePaginator;
+    public function listAdmin(?string $search, ?string $status, int $perPage): LengthAwarePaginator;
 
     public function allApi(): Collection;
 
-    public function findApi(int $id): Movie|null;
+    public function findApi(int $id): ?Movie;
 
     public function createApi(array $data): Movie;
 
@@ -22,7 +24,7 @@ interface MovieRepositoryInterface
 
     public function softDelete(Movie $movie): bool;
 
-    public function restore(int $id): Movie|null;
+    public function restore(int $id): ?Movie;
 
     public function forceDelete(int $id): bool;
 

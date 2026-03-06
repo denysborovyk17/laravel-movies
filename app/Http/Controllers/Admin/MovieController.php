@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
@@ -26,7 +28,7 @@ class MovieController extends Controller
 
         return array_merge($validated, [
             'image_file' => $request->file('image'),
-            'remove_image' => $request->boolean('remove_image')
+            'remove_image' => $request->boolean('remove_image'),
         ]);
     }
 

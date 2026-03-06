@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Repositories;
 
 use App\Models\Movie;
@@ -13,11 +15,9 @@ class MovieRepository implements MovieRepositoryInterface
     {
         return Movie::with('director')
             ->where('status', 'published')
-            ->when($search, fn($q) =>
-                $q->where(fn($q) =>
-                    $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                )
+            ->when($search, fn ($q) => $q->where(fn ($q) => $q->where('title', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+            )
             )
             ->latest('year')
             ->paginate($perPage);
@@ -26,12 +26,10 @@ class MovieRepository implements MovieRepositoryInterface
     public function listAdmin(?string $search = null, ?string $status = null, int $perPage = 12): LengthAwarePaginator
     {
         return Movie::with('director')
-            ->when($status, fn($q) => $q->where('status', $status))
-            ->when($search, fn($q) =>
-                $q->where(fn($q) =>
-                    $q->where('title', 'like', "%{$search}%")
-                    ->orWhere('description', 'like', "%{$search}%")
-                )
+            ->when($status, fn ($q) => $q->where('status', $status))
+            ->when($search, fn ($q) => $q->where(fn ($q) => $q->where('title', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+            )
             )
             ->latest('year')
             ->paginate($perPage);
@@ -42,7 +40,7 @@ class MovieRepository implements MovieRepositoryInterface
         return Movie::latest('year')->get();
     }
 
-    public function findApi(int $id): Movie|null
+    public function findApi(int $id): ?Movie
     {
         return Movie::find($id);
     }
@@ -55,6 +53,7 @@ class MovieRepository implements MovieRepositoryInterface
     public function updateApi(Movie $movie, array $data): Movie
     {
         $movie->update($data);
+
         return $movie;
     }
 
@@ -63,21 +62,22 @@ class MovieRepository implements MovieRepositoryInterface
         return $movie->delete();
     }
 
-    public function restore(int $id): Movie|null
+    public function restore(int $id): ?Movie
     {
         $movie = Movie::onlyTrashed()->find($id);
-        if (!$movie) { 
+        if (! $movie) {
             return null;
         }
 
         $movie->restore();
+
         return $movie;
     }
 
     public function forceDelete(int $id): bool
     {
         $movie = Movie::find($id);
-        if (!$movie) {
+        if (! $movie) {
             return false;
         }
 

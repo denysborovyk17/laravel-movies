@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services\Interfaces;
 
 use App\Models\Movie;
@@ -11,15 +13,15 @@ interface ApiMovieServiceInterface
 
     public function getTrashed(): Collection;
 
-    public function getByIdApi(int $id): Movie|null;
+    public function getByIdApi(int $id): ?Movie;
 
     public function createApi(array $data): Movie;
 
-    public function updateApi(int $id, array $data): Movie|null;
+    public function updateApi(int $id, array $data): ?Movie;
 
     public function softDeleteApi(int $id): bool;
 
-    public function restoreApi(int $id): Movie|null;
+    public function restoreApi(int $id): ?Movie;
 
     public function forceDeleteApi(int $id): bool;
 }

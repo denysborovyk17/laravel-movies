@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -15,7 +17,7 @@ class MovieFactory extends Factory
         $title = $this->faker->sentence(mt_rand(5, 8));
 
         $slugBase = Str::slug($title);
-        $slug = $slugBase . "-" . $this->faker->unique()->numberBetween(1000, 999999);
+        $slug = $slugBase.'-'.$this->faker->unique()->numberBetween(1000, 999999);
 
         return [
             'title' => $title,
@@ -23,7 +25,7 @@ class MovieFactory extends Factory
             'description' => $this->faker->paragraph(mt_rand(2, 4)),
             'year' => $this->faker->year(2050),
             'genre' => $this->faker->dateTimeBetween('-30days', 'now'),
-            'rating' => $this->faker->numberBetween(1, 10)
+            'rating' => $this->faker->numberBetween(1, 10),
         ];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
@@ -18,8 +20,8 @@ class MovieResource extends MovieBaseResource
             'rating' => $this->rating,
             'status' => $this->status,
             'admin_only' => $this->mergeWhen($request->user()?->role->value === 'admin', [
-                'ip' => $this->ip_address
-            ])
+                'ip' => $this->ip_address,
+            ]),
         ];
     }
 }

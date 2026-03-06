@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
@@ -24,7 +26,7 @@ class LoginRequest extends FormRequest
         return [
             'email' => 'required|email|string|email',
             'password' => 'required|string',
-            'remember_me' => 'nullable|boolean'
+            'remember_me' => 'nullable|boolean',
         ];
     }
 
@@ -35,7 +37,7 @@ class LoginRequest extends FormRequest
             'email.email' => 'Email має містити @',
             'email.string' => 'Email має бути рядком',
             'password.required' => 'Пароль обов\'язковий',
-            'password.string' => 'Пароль має бути рядком'
+            'password.string' => 'Пароль має бути рядком',
         ];
     }
 }

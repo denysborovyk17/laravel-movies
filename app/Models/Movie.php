@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use App\Enums\MovieStatus;
@@ -21,6 +23,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \App\Models\Director|null $director
  * @property-read string|null $image_url
+ *
  * @method static \Database\Factories\MovieFactory factory($count = null, $state = [])
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Movie newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Movie newQuery()
@@ -40,6 +43,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Movie whereYear($value)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Movie withTrashed(bool $withTrashed = true)
  * @method static \Illuminate\Database\Eloquent\Builder<static>|Movie withoutTrashed()
+ *
  * @mixin \Eloquent
  */
 class Movie extends Model
@@ -50,7 +54,7 @@ class Movie extends Model
 
     protected $casts = [
         'rating' => 'float',
-        'status' => MovieStatus::class
+        'status' => MovieStatus::class,
     ];
 
     public $timestamps = false;
@@ -62,7 +66,7 @@ class Movie extends Model
 
     public function getImageUrlAttribute(): ?string
     {
-        return $this->image ? asset('storage/' . $this->image) : null;
+        return $this->image ? asset('storage/'.$this->image) : null;
     }
 
     public function scopePublished($query)

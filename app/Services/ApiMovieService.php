@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Services;
 
 use App\Exceptions\ApiException;
@@ -31,12 +33,12 @@ class ApiMovieService implements ApiMovieServiceInterface
         });
     }
 
-    public function getByIdApi(int $id): Movie|null
+    public function getByIdApi(int $id): ?Movie
     {
         return Cache::remember("movies_{$id}", 60, function () use ($id) {
             $movie = $this->movieRepository->findApi($id);
 
-            if (!$movie) {
+            if (! $movie) {
                 throw new ApiException("Movie with ID $id not found", 404);
             }
 
@@ -50,7 +52,7 @@ class ApiMovieService implements ApiMovieServiceInterface
 
         $data['director_id'] = $director->id;
         unset($data['director']);
-    
+
         $slug = Str::slug($data['title']);
         $data['slug'] = $slug;
         $movie = $this->movieRepository->createApi($data);
@@ -64,10 +66,10 @@ class ApiMovieService implements ApiMovieServiceInterface
         });
     }
 
-    public function updateApi(int $id, array $data): Movie|null
+    public function updateApi(int $id, array $data): ?Movie
     {
         $movie = $this->movieRepository->findApi($id);
-        if (!$movie) {
+        if (! $movie) {
             return null;
         }
 
@@ -76,13 +78,14 @@ class ApiMovieService implements ApiMovieServiceInterface
         $updatedMovie = $this->movieRepository->updateApi($movie, $data);
 
         Cache::forget('movies_all');
+
         return $updatedMovie;
     }
 
     public function softDeleteApi(int $id): bool
     {
         $movie = $this->movieRepository->findApi($id);
-        if (!$movie) {
+        if (! $movie) {
             return false;
         }
 
@@ -94,10 +97,10 @@ class ApiMovieService implements ApiMovieServiceInterface
         return $deletedMovie;
     }
 
-    public function restoreApi(int $id): Movie|null
+    public function restoreApi(int $id): ?Movie
     {
         $movie = $this->movieRepository->restore($id);
-        if (!$movie) {
+        if (! $movie) {
             return null;
         }
 
@@ -110,7 +113,7 @@ class ApiMovieService implements ApiMovieServiceInterface
     public function forceDeleteApi(int $id): bool
     {
         $deleted = $this->movieRepository->forceDelete($id);
-        if (!$deleted) {
+        if (! $deleted) {
             return false;
         }
 

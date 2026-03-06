@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Middleware;
 
 use Closure;
@@ -23,7 +25,7 @@ class RequestIdMiddleware
         Log::withContext([
             'request_id' => $requestId,
             'path' => $request->path(),
-            'method' => $request->method()
+            'method' => $request->method(),
         ]);
 
         $response = $next($request);

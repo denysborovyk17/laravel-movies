@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers\Auth;
 
 use App\Enums\UserRole;
@@ -20,12 +22,12 @@ class RegisterController extends Controller
             'name' => $userData['name'],
             'email' => $userData['email'],
             'password' => Hash::make($userData['password']),
-            'role' => UserRole::USER->value
+            'role' => UserRole::USER->value,
         ]);
 
         Auth::login($user);
 
         return redirect()->intended(route('movies.index'))
-                            ->with('success', 'Реєстрація успішна! Ласкаво просимо!');
+            ->with('success', 'Реєстрація успішна! Ласкаво просимо!');
     }
 }
