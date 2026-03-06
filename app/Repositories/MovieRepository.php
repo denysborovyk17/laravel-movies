@@ -15,9 +15,12 @@ class MovieRepository implements MovieRepositoryInterface
     {
         return Movie::with('director')
             ->where('status', 'published')
-            ->when($search, fn ($q) => $q->where(fn ($q) => $q->where('title', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
-            )
+            ->when(
+                $search,
+                fn($q) => $q->where(
+                    fn($q) => $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%")
+                )
             )
             ->latest('year')
             ->paginate($perPage);
@@ -26,10 +29,13 @@ class MovieRepository implements MovieRepositoryInterface
     public function listAdmin(?string $search = null, ?string $status = null, int $perPage = 12): LengthAwarePaginator
     {
         return Movie::with('director')
-            ->when($status, fn ($q) => $q->where('status', $status))
-            ->when($search, fn ($q) => $q->where(fn ($q) => $q->where('title', 'like', "%{$search}%")
-                ->orWhere('description', 'like', "%{$search}%")
-            )
+            ->when($status, fn($q) => $q->where('status', $status))
+            ->when(
+                $search,
+                fn($q) => $q->where(
+                    fn($q) => $q->where('title', 'like', "%{$search}%")
+                        ->orWhere('description', 'like', "%{$search}%")
+                )
             )
             ->latest('year')
             ->paginate($perPage);
