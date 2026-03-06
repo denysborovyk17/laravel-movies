@@ -16,7 +16,7 @@ interface MovieRepositoryInterface
 
     public function allApi(): Collection;
 
-    public function findApi(int $id): ?Movie;
+    public function findApi(int $id): Movie|null;
 
     public function createApi(array $data): Movie;
 
@@ -24,7 +24,7 @@ interface MovieRepositoryInterface
 
     public function softDelete(Movie $movie): bool;
 
-    public function restore(int $id): ?Movie;
+    public function restore(int $id): Movie|null;
 
     public function forceDelete(int $id): bool;
 

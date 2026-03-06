@@ -33,7 +33,7 @@ class ApiMovieService implements ApiMovieServiceInterface
         });
     }
 
-    public function getByIdApi(int $id): ?Movie
+    public function getByIdApi(int $id): Movie|null
     {
         return Cache::remember("movies_{$id}", 60, function () use ($id) {
             $movie = $this->movieRepository->findApi($id);
@@ -66,7 +66,7 @@ class ApiMovieService implements ApiMovieServiceInterface
         });
     }
 
-    public function updateApi(int $id, array $data): ?Movie
+    public function updateApi(int $id, array $data): Movie|null
     {
         $movie = $this->movieRepository->findApi($id);
         if (! $movie) {
@@ -97,7 +97,7 @@ class ApiMovieService implements ApiMovieServiceInterface
         return $deletedMovie;
     }
 
-    public function restoreApi(int $id): ?Movie
+    public function restoreApi(int $id): Movie|null
     {
         $movie = $this->movieRepository->restore($id);
         if (! $movie) {

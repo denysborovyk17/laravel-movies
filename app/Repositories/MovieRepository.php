@@ -40,7 +40,7 @@ class MovieRepository implements MovieRepositoryInterface
         return Movie::latest('year')->get();
     }
 
-    public function findApi(int $id): ?Movie
+    public function findApi(int $id): Movie|null
     {
         return Movie::find($id);
     }
@@ -62,7 +62,7 @@ class MovieRepository implements MovieRepositoryInterface
         return $movie->delete();
     }
 
-    public function restore(int $id): ?Movie
+    public function restore(int $id): Movie|null
     {
         $movie = Movie::onlyTrashed()->find($id);
         if (! $movie) {

@@ -13,7 +13,7 @@ interface ApiMovieServiceInterface
 
     public function getTrashed(): Collection;
 
-    public function getByIdApi(int $id): ?Movie;
+    public function getByIdApi(int $id): Movie|null;
 
     public function createApi(array $data): Movie;
 
@@ -21,7 +21,7 @@ interface ApiMovieServiceInterface
 
     public function softDeleteApi(int $id): bool;
 
-    public function restoreApi(int $id): ?Movie;
+    public function restoreApi(int $id): Movie|null;
 
     public function forceDeleteApi(int $id): bool;
 }
