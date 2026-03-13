@@ -47,7 +47,7 @@ class MovieService implements MovieServiceInterface
             }
         }
 
-        return $movie->update($filtered);
+        return $movie->update($data, $filtered);
     }
 
     public function delete(Movie $movie): bool
