@@ -19,7 +19,7 @@ class MovieController extends Controller
     use AuthorizesRequests;
 
     public function __construct(
-        private MovieService $movieService
+        private readonly MovieService $movieService
     ) {}
 
     private function prepareMovieData(Request $request): array
