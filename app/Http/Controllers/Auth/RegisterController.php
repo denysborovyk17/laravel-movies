@@ -16,12 +16,12 @@ class RegisterController extends Controller
 {
     public function __invoke(RegisterRequest $request): RedirectResponse
     {
-        $userData = $request->validated();
+        $userDTO = $request->toDTO();
 
         $user = User::create([
-            'name' => $userData['name'],
-            'email' => $userData['email'],
-            'password' => Hash::make($userData['password']),
+            'name' => $userDTO->name,
+            'email' => $userDTO->email,
+            'password' => Hash::make($userDTO->password),
             'role' => UserRole::USER->value,
         ]);
 
