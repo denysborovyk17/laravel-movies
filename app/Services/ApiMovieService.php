@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Enums\CacheTtl;
+use App\Enums\HttpStatus;
 use App\Exceptions\ApiException;
 use App\Models\Director;
 use App\Models\Movie;
@@ -21,28 +23,28 @@ class ApiMovieService implements ApiMovieServiceInterface
 
     public function getAllApi(): Collection
     {
-        return Cache::remember('movies_all', 60, function () {
+        return Cache::remember('movies_all', CacheTtl::SHORT->value, function () {
             return $this->movieRepository->allApi();
+        });
+    }
+
+    public function getByIdApi(int $movieId): Movie|null
+    {
+        return Cache::remember("movies_{$movieId}", CacheTtl::SHORT->value, function () use ($movieId) {
+            $movie = $this->movieRepository->findApi($movieId);
+
+            if (! $movie) {
+                throw new ApiException("Movie with ID $movieId not found", HttpStatus::NOT_FOUND->value);
+            }
+
+            return $movie;
         });
     }
 
     public function getTrashed(): Collection
     {
-        return Cache::remember('movies_trash', 60, function () {
+        return Cache::remember('movies_trash', CacheTtl::SHORT->value, function () {
             return $this->movieRepository->getTrashed();
-        });
-    }
-
-    public function getByIdApi(int $id): Movie|null
-    {
-        return Cache::remember("movies_{$id}", 60, function () use ($id) {
-            $movie = $this->movieRepository->findApi($id);
-
-            if (! $movie) {
-                throw new ApiException("Movie with ID $id not found", 404);
-            }
-
-            return $movie;
         });
     }
 
@@ -59,16 +61,16 @@ class ApiMovieService implements ApiMovieServiceInterface
 
         Cache::forget('movies_all');
 
-        $id = $movie->id;
+        $movieId = $movie->id;
 
-        return Cache::tags(['movies'])->remember("movie_{$id}", 120, function () use ($id) {
-            return $this->movieRepository->findApi($id);
+        return Cache::tags(['movies'])->remember("movie_{$movieId}", CacheTtl::MEDIUM->value, function () use ($movieId) {
+            return $this->movieRepository->findApi($movieId);
         });
     }
 
-    public function updateApi(int $id, array $data): Movie|null
+    public function updateApi(int $movieId, array $data): Movie|null
     {
-        $movie = $this->movieRepository->findApi($id);
+        $movie = $this->movieRepository->findApi($movieId);
         if (! $movie) {
             return null;
         }
@@ -82,9 +84,9 @@ class ApiMovieService implements ApiMovieServiceInterface
         return $updatedMovie;
     }
 
-    public function softDeleteApi(int $id): bool
+    public function softDeleteApi(int $movieId): bool
     {
-        $movie = $this->movieRepository->findApi($id);
+        $movie = $this->movieRepository->findApi($movieId);
         if (! $movie) {
             return false;
         }
@@ -92,33 +94,33 @@ class ApiMovieService implements ApiMovieServiceInterface
         $deletedMovie = $this->movieRepository->softDelete($movie);
 
         Cache::forget('movies_all');
-        Cache::forget("movies_{$id}");
+        Cache::forget("movies_{$movieId}");
 
         return $deletedMovie;
     }
 
-    public function restoreApi(int $id): Movie|null
+    public function restoreApi(int $movieId): Movie|null
     {
-        $movie = $this->movieRepository->restore($id);
+        $movie = $this->movieRepository->restore($movieId);
         if (! $movie) {
             return null;
         }
 
         Cache::forget('movies_all');
-        Cache::forget("movies_{$id}");
+        Cache::forget("movies_{$movieId}");
 
         return $movie;
     }
 
-    public function forceDeleteApi(int $id): bool
+    public function forceDeleteApi(int $movieId): bool
     {
-        $deleted = $this->movieRepository->forceDelete($id);
-        if (! $deleted) {
+        $deletedMovie = $this->movieRepository->forceDelete($movieId);
+        if (! $deletedMovie) {
             return false;
         }
 
         Cache::forget('movies_all');
-        Cache::forget("movies_{$id}");
+        Cache::forget("movies_{$movieId}");
 
         return true;
     }
