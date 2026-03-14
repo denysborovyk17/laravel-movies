@@ -3,13 +3,11 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Admin\MovieController as AdminMovieController;
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\LogoutController;
-use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\MovieController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', fn () => redirect()->route('movies.index'))->name('index');
+Route::get('/', fn() => redirect()->route('movies.index'))->name('index');
 
 Route::prefix('admin')->as('admin.')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::resource('movies', AdminMovieController::class);
@@ -21,11 +19,12 @@ Route::prefix('movies')->as('movies.')->group(function () {
     Route::get('/{movie:slug}', [MovieController::class, 'show'])->name('show');
 });
 
-Route::post('/logout', LogoutController::class)->middleware('auth')->name('logout');
+Route::get('/me', [AuthController::class, 'me'])->middleware('auth')->name('me');
+Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::middleware('guest')->group(function () {
-    Route::get('login', fn () => view('auth.login'))->name('login');
-    Route::post('login', LoginController::class)->middleware('throttle:5,1')->name('login.attempt');
+    Route::get('login', fn() => view('auth.login'))->name('login');
+    Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.attempt');
     Route::view('register', 'auth.register')->name('register');
-    Route::post('register', RegisterController::class)->name('register.store');
+    Route::post('register', [AuthController::class, 'register'])->name('register.store');
 });
