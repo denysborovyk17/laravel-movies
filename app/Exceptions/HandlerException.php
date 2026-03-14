@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Exceptions;
 
+use App\Enums\HttpStatus;
 use App\Exceptions\ApiException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
@@ -46,7 +47,7 @@ class HandlerException
             return response()->json([
                 'success' => false,
                 'message' => 'Too many requests. Please try again later.',
-            ], 429);
+            ], HttpStatus::TOO_MANY_REQUESTS->value);
         });
 
         $exceptions->render(function (ApiException $e) {
@@ -68,14 +69,14 @@ class HandlerException
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage() ?: 'Forbidden',
-            ], 403);
+            ], HttpStatus::UNAUTHORIZED->value);
         });
 
         $exceptions->render(function (AuthenticationException $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'Unauthorize',
-            ], 401);
+            ], HttpStatus::FORBIDDEN->value);
         });
 
         $exceptions->render(function (ValidationException $e) {
@@ -83,14 +84,14 @@ class HandlerException
                 'success' => false,
                 'message' => 'Validation error',
                 'errors' => $e->errors(),
-            ], 422);
+            ], HttpStatus::UNPROCESSABLE_ENTITY->value);
         });
 
         $exceptions->render(function (Throwable $e) {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
-            ], 500);
+            ], HttpStatus::INTERNAL_SERVER_ERROR->value);
         });
     }
 }
