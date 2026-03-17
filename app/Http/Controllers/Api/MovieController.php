@@ -5,10 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreMovieRequest;
-use App\Http\Requests\UpdateMovieRequest;
-use App\Http\Resources\MovieCollection;
-use App\Http\Resources\MovieResource;
+use App\Http\Requests\{StoreMovieRequest, UpdateMovieRequest};
+use App\Http\Resources\{MovieCollection, MovieResource};
 use App\Models\Director;
 use App\Services\Interfaces\ApiMovieServiceInterface;
 use Illuminate\Http\JsonResponse;

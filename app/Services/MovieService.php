@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Models\Director;
-use App\Models\Movie;
+use App\Models\{Movie, Director};
 use App\Repositories\Interfaces\MovieRepositoryInterface;
 use App\Services\Interfaces\MovieServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;

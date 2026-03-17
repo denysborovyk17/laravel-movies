@@ -5,8 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\StoreMovieRequest;
-use App\Http\Requests\UpdateMovieRequest;
+use App\Http\Requests\{StoreMovieRequest, UpdateMovieRequest};
 use App\Models\Movie;
 use App\Services\MovieService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;

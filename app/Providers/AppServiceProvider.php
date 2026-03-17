@@ -6,10 +6,8 @@ namespace App\Providers;
 
 use App\Repositories\Interfaces\MovieRepositoryInterface;
 use App\Repositories\MovieRepository;
-use App\Services\ApiMovieService;
-use App\Services\Interfaces\ApiMovieServiceInterface;
-use App\Services\Interfaces\MovieServiceInterface;
-use App\Services\MovieService;
+use App\Services\{ApiMovieService, MovieService};
+use App\Services\Interfaces\{ApiMovieServiceInterface, MovieServiceInterface};
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 

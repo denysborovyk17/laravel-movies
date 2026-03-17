@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace App\Services;
 
-use App\Enums\CacheTtl;
-use App\Enums\HttpStatus;
+use App\Enums\{HttpStatus, CacheTtl};
 use App\Exceptions\ApiException;
-use App\Models\Director;
-use App\Models\Movie;
+use App\Models\{Movie, Director};
 use App\Repositories\Interfaces\MovieRepositoryInterface;
 use App\Services\Interfaces\ApiMovieServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
