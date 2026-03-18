@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Requests\Api\Auth;
 
+use App\DTOs\LoginDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ApiLoginRequest extends FormRequest
@@ -27,5 +28,10 @@ class ApiLoginRequest extends FormRequest
             'email' => 'required|string|email',
             'password' => 'required|string',
         ];
+    }
+
+    public function toDTO(): LoginDTO
+    {
+        return LoginDTO::fromArray($this->validated());
     }
 }
