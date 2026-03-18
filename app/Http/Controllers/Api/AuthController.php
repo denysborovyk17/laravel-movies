@@ -7,46 +7,28 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\{ApiRegisterRequest, ApiLoginRequest};
 use App\Models\User;
+use App\Services\ApiAuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        private readonly ApiAuthService $apiAuthService
+    ) {}
+
     public function register(ApiRegisterRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        $resultRegister = $this->apiAuthService->register($request->validated());
 
-        $user = User::query()->create($data);
-
-        $token = $user->createToken('api_token')->plainTextToken;
-
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ], 201);
+        return response()->json($resultRegister, 201);
     }
 
     public function login(ApiLoginRequest $request): JsonResponse
     {
-        $data = $request->validated();
+        $resultLogin = $this->apiAuthService->login($request->validated());
 
-        $user = User::query()
-            ->where('email', $data['email'])
-            ->first();
-
-        if (! $user || ! Hash::check($data['password'], $user->password)) {
-            return response()->json([
-                'message' => 'Invalid email or password',
-            ], 422);
-        }
-
-        $token = $user->createToken('api_token')->plainTextToken;
-
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ]);
+        return response()->json($resultLogin);
     }
 
     public function me(Request $request): JsonResponse
@@ -58,9 +40,7 @@ class AuthController extends Controller
 
     public function logout(Request $request): JsonResponse
     {
-        $user = $request->user();
-
-        $user->currentAccessToken()->delete();
+        $this->apiAuthService->logout($request->user());
 
         return response()->json([
             'message' => 'You successfully logout',
