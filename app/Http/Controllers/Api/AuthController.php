@@ -6,7 +6,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\{ApiRegisterRequest, ApiLoginRequest};
-use App\Models\User;
 use App\Services\ApiAuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,16 +18,20 @@ class AuthController extends Controller
 
     public function register(ApiRegisterRequest $request): JsonResponse
     {
-        $resultRegister = $this->apiAuthService->register($request->validated());
+        $userDTO = $request->toDTO();
 
-        return response()->json($resultRegister, 201);
+        $authDTO = $this->apiAuthService->register($userDTO);
+
+        return response()->json($authDTO, 201);
     }
 
     public function login(ApiLoginRequest $request): JsonResponse
     {
-        $resultLogin = $this->apiAuthService->login($request->validated());
+        $userDTO = $request->toDTO();
 
-        return response()->json($resultLogin);
+        $authDTO = $this->apiAuthService->login($userDTO);
+
+        return response()->json($authDTO);
     }
 
     public function me(Request $request): JsonResponse
