@@ -12,7 +12,7 @@ class MovieCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            'data' => $this->collection->map(fn ($movie) => [
+            'data' => $this->collection->map(fn($movie) => [
                 'id' => $movie->id,
                 'title' => $movie->title,
                 'slug' => $movie->slug,
