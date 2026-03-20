@@ -50,7 +50,7 @@ class HandlerException
             ], HttpStatus::TOO_MANY_REQUESTS->value);
         });
 
-        $exceptions->render(function (ApiException $e) {
+        $exceptions->render(function (ApiException $e): JsonResponse {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
@@ -58,28 +58,28 @@ class HandlerException
             ], $e->status);
         });
 
-        $exceptions->render(function (ModelNotFoundException $e) {
+        $exceptions->render(function (ModelNotFoundException $e): JsonResponse {
             return response()->json([
                 'success' => false,
                 'message' => 'Resource not found',
-            ]);
+            ], HttpStatus::NOT_FOUND->value);
         });
 
-        $exceptions->render(function (AuthorizationException $e) {
+        $exceptions->render(function (AuthorizationException $e): JsonResponse {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage() ?: 'Forbidden',
-            ], HttpStatus::UNAUTHORIZED->value);
-        });
-
-        $exceptions->render(function (AuthenticationException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Unauthorize',
             ], HttpStatus::FORBIDDEN->value);
         });
 
-        $exceptions->render(function (ValidationException $e) {
+        $exceptions->render(function (AuthenticationException $e): JsonResponse {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized',
+            ], HttpStatus::UNAUTHORIZED->value);
+        });
+
+        $exceptions->render(function (ValidationException $e): JsonResponse {
             return response()->json([
                 'success' => false,
                 'message' => 'Validation error',
@@ -87,7 +87,7 @@ class HandlerException
             ], HttpStatus::UNPROCESSABLE_ENTITY->value);
         });
 
-        $exceptions->render(function (Throwable $e) {
+        $exceptions->render(function (Throwable $e): JsonResponse {
             return response()->json([
                 'success' => false,
                 'message' => $e->getMessage(),
