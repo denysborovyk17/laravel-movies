@@ -18,18 +18,14 @@ class AuthController extends Controller
 
     public function register(ApiRegisterRequest $request): JsonResponse
     {
-        $userDTO = $request->toDTO();
+        $authDTO = $this->apiAuthService->register($request->toDTO());
 
-        $authDTO = $this->apiAuthService->register($userDTO);
-
-        return response()->json($authDTO, 201);
+        return response()->json($authDTO);
     }
 
     public function login(ApiLoginRequest $request): JsonResponse
     {
-        $userDTO = $request->toDTO();
-
-        $authDTO = $this->apiAuthService->login($userDTO);
+        $authDTO = $this->apiAuthService->login($request->toDTO());
 
         return response()->json($authDTO);
     }
