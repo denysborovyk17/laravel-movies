@@ -41,6 +41,13 @@ class HandlerException
 
     public static function registerRenderers(Exceptions $exceptions): void
     {
+        $exceptions->render(function (MovieNotFoundException $e): JsonResponse {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], HttpStatus::NOT_FOUND->value);
+        });
+    
         $exceptions->render(function (ThrottleRequestsException $e): JsonResponse {
             return response()->json([
                 'success' => false,
