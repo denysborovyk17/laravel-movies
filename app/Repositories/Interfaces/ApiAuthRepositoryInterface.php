@@ -11,5 +11,7 @@ interface ApiAuthRepositoryInterface
 
     public function login(Login $userDTO): User;
 
-    public function logout(User $user): void;
+    public function me(int $userId): User;
+
+    public function logout(int $userId): void;
 }

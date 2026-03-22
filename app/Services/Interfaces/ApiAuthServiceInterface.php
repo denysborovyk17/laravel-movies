@@ -2,7 +2,7 @@
 
 namespace App\Services\Interfaces;
 
-use App\DTO\{Auth, Login, Register};
+use App\DTO\{Auth, Login, Register, UserData};
 use App\Models\User;
 
 interface ApiAuthServiceInterface
@@ -11,5 +11,7 @@ interface ApiAuthServiceInterface
 
     public function login(Login $userDTO): Auth;
 
-    public function logout(User $user): void;
+    public function me(int $userId): UserData;
+
+    public function logout(int $userId): void;
 }

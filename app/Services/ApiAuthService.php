@@ -55,8 +55,19 @@ class ApiAuthService implements ApiAuthServiceInterface
         );
     }
 
-    public function logout(User $user): void
+    public function me(int $userId): UserData
     {
-        $this->apiAuthRepository->logout($user);
+        $user = $this->apiAuthRepository->me($userId);
+    
+        return new UserData(
+            id: $user->id,
+            name: $user->name,
+            email: $user->email
+        );
+    }
+
+    public function logout(int $userId): void
+    {
+        $this->apiAuthRepository->logout($userId);
     }
 }

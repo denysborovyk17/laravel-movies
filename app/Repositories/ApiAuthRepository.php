@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\DTO\{Register, Login};
+use App\DTO\{Auth, Register, Login, UserData};
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Repositories\Interfaces\ApiAuthRepositoryInterface;
@@ -27,8 +27,17 @@ class ApiAuthRepository implements ApiAuthRepositoryInterface
             ->first();
     }
 
-    public function logout(User $user): void
+    public function me(int $userId): User
     {
-        $user->tokens()->delete();
+        return User::find($userId);
+    }
+
+    public function logout(int $userId): void
+    {
+        $user = User::find($userId);
+        
+        if ($user) {
+            $user->tokens()->delete();   
+        }
     }
 }
