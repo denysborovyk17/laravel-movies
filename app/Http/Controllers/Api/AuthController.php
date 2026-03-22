@@ -4,28 +4,29 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\{ApiRegisterRequest, ApiLoginRequest};
-use App\Services\ApiAuthService;
+use App\Http\Resources\AuthResource;
+use App\Services\Interfaces\ApiAuthServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     public function __construct(
-        private readonly ApiAuthService $apiAuthService
+        private readonly ApiAuthServiceInterface $apiAuthService
     ) {}
 
-    public function register(ApiRegisterRequest $request): JsonResponse
+    public function register(ApiRegisterRequest $request): AuthResource
     {
         $authDTO = $this->apiAuthService->register($request->toDTO());
 
-        return response()->json($authDTO);
+        return new AuthResource($authDTO);
     }
 
-    public function login(ApiLoginRequest $request): JsonResponse
+    public function login(ApiLoginRequest $request): AuthResource
     {
         $authDTO = $this->apiAuthService->login($request->toDTO());
 
-        return response()->json($authDTO);
+        return new AuthResource($authDTO);
     }
 
     public function me(Request $request): JsonResponse
