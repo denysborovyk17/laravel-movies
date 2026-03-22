@@ -3,7 +3,7 @@
 namespace App\Services;
 
 use App\Enums\{HttpStatus, CacheTtl};
-use App\Exceptions\ApiException;
+use App\Exceptions\MovieNotFoundException;
 use App\Models\{Movie, Director};
 use App\Repositories\Interfaces\ApiMovieRepositoryInterface;
 use App\Services\Interfaces\ApiMovieServiceInterface;
@@ -30,7 +30,7 @@ class ApiMovieService implements ApiMovieServiceInterface
             $movie = $this->apiMovieRepositoryInterface->findApi($movieId);
 
             if (!$movie) {
-                throw new ApiException("Movie with ID $movieId not found", HttpStatus::NOT_FOUND->value);
+                throw new MovieNotFoundException($movieId);
             }
 
             return $movie;
@@ -46,10 +46,8 @@ class ApiMovieService implements ApiMovieServiceInterface
 
     public function createApi(array $data): Movie
     {
-        $director = Director::firstOrCreate(['name' => $data['director']]);
-
+        $director = Director::create(['name' => $data['director']]);
         $data['director_id'] = $director->id;
-        unset($data['director']);
 
         $slug = Str::slug($data['title']);
         $data['slug'] = $slug;
