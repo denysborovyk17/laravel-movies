@@ -2,8 +2,7 @@
 
 namespace App\Services;
 
-use App\DTO\{AuthDTO, LoginDTO, RegisterDTO};
-use App\DTO\UserViewDTO;
+use App\DTO\{Auth, Login, Register, UserData};
 use App\Models\User;
 use App\Repositories\Interfaces\ApiAuthRepositoryInterface;
 use App\Services\Interfaces\ApiAuthServiceInterface;
@@ -16,25 +15,25 @@ class ApiAuthService implements ApiAuthServiceInterface
         private readonly ApiAuthRepositoryInterface $apiAuthRepository
     ) {}
 
-    public function register(RegisterDTO $userDTO): AuthDTO
+    public function register(Register $userDTO): Auth
     {
         $user = $this->apiAuthRepository->register($userDTO);
 
         $token = $user->createToken('api_token')->plainTextToken;
 
-        $userViewDTO = new UserViewDTO(
+        $userViewDTO = new UserData(
             id: $user->id,
             name: $user->name,
             email: $user->email
         );
 
-        return new AuthDTO(
+        return new Auth(
             user: $userViewDTO,
             token: $token
         );
     }
 
-    public function login(LoginDTO $userDTO): AuthDTO
+    public function login(Login $userDTO): Auth
     {
         $user = $this->apiAuthRepository->login($userDTO);
 
@@ -44,13 +43,13 @@ class ApiAuthService implements ApiAuthServiceInterface
 
         $token = $user->createToken('api_token')->plainTextToken;
 
-        $userViewDTO = new UserViewDTO(
+        $userViewDTO = new UserData(
             id: $user->id,
             name: $user->name,
             email: $user->email
         );
 
-        return new AuthDTO(
+        return new Auth(
             user: $userViewDTO,
             token: $token
         );

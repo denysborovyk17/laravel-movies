@@ -2,8 +2,7 @@
 
 namespace App\Repositories;
 
-use App\DTO\LoginDTO;
-use App\DTO\RegisterDTO;
+use App\DTO\{Register, Login};
 use App\Enums\UserRole;
 use App\Models\User;
 use App\Repositories\Interfaces\ApiAuthRepositoryInterface;
@@ -11,7 +10,7 @@ use Illuminate\Support\Facades\Hash;
 
 class ApiAuthRepository implements ApiAuthRepositoryInterface
 {
-    public function register(RegisterDTO $userDTO): User
+    public function register(Register $userDTO): User
     {
         return User::create([
             'name' => $userDTO->getName(),
@@ -21,7 +20,7 @@ class ApiAuthRepository implements ApiAuthRepositoryInterface
         ]);
     }
 
-    public function login(LoginDTO $userDTO): User
+    public function login(Login $userDTO): User
     {
         return User::query()
             ->where('email', $userDTO->getEmail())
