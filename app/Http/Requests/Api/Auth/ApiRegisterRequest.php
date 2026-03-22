@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Api\Auth;
 
-use App\DTOs\RegisterDTO;
+use App\DTO\RegisterDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ApiRegisterRequest extends FormRequest

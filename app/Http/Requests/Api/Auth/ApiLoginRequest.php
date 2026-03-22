@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Api\Auth;
 
-use App\DTOs\LoginDTO;
+use App\DTO\LoginDTO;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ApiLoginRequest extends FormRequest
