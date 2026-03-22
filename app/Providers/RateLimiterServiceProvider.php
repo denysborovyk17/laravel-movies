@@ -18,14 +18,14 @@ class RateLimiterServiceProvider extends ServiceProvider
     {
         RateLimiter::for('api', function (Request $request) {
             if ($request->user()) {
-                return Limit::perMinute(config('cache_ttl.api_authenticated'))->by($request->user()->id);
+                return Limit::perMinute(config('rate_limiter.api_authenticated'))->by($request->user()->id);
             }
 
-            return Limit::perMinute(config('cache_ttl.api_guest'))->by($request->ip());
+            return Limit::perMinute(config('rate_limiter.api_guest'))->by($request->ip());
         });
 
         RateLimiter::for('login', function (Request $request) {
-            return Limit::perMinute(config('cache_ttl.login'))->by($request->ip());
+            return Limit::perMinute(config('rate_limiter.login'))->by($request->ip());
         });
     }
 }
