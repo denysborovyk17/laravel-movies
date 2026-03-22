@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\{ApiRegisterRequest, ApiLoginRequest};
-use App\Http\Resources\AuthResource;
+use App\Http\Resources\{AuthResource, UserDataResource};
 use App\Services\Interfaces\ApiAuthServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -29,16 +29,18 @@ class AuthController extends Controller
         return new AuthResource($authDTO);
     }
 
-    public function me(Request $request): JsonResponse
+    public function me(Request $request): UserDataResource
     {
-        return response()->json([
-            'user' => $request->user(),
-        ]);
+        $userData = $this->apiAuthService->me($request->user()->id);
+    
+        return new UserDataResource($userData);
     }
 
     public function logout(Request $request): JsonResponse
     {
-        $this->apiAuthService->logout($request->user());
+        $userId = $request->user()->id;
+        
+        $this->apiAuthService->logout($userId);
 
         return response()->json([
             'message' => 'You successfully logout',
