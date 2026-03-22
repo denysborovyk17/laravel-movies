@@ -3,14 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Movie;
-use App\Services\MovieService;
+use App\Services\Interfaces\MovieServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class MovieController extends Controller
 {
     public function __construct(
-        private readonly MovieService $movieService
+        private readonly MovieServiceInterface $movieService
     ) {}
 
     public function index(Request $request): View
