@@ -15,7 +15,7 @@ interface ApiMovieServiceInterface
 
     public function createApi(array $data): Movie;
 
-    public function updateApi(int $movieId, array $data): ?Movie;
+    public function updateApi(int $movieId, array $data): Movie|null;
 
     public function softDeleteApi(int $movieId): bool;
 

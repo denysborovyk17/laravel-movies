@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
-use App\DTOs\{AuthDTO, LoginDTO, RegisterDTO};
-use App\DTOs\UserViewDTO;
-use App\Enums\UserRole;
+use App\DTO\{AuthDTO, LoginDTO, RegisterDTO};
+use App\DTO\UserViewDTO;
 use App\Models\User;
+use App\Repositories\Interfaces\ApiAuthRepositoryInterface;
 use App\Services\Interfaces\ApiAuthServiceInterface;
 use Exception;
 use Illuminate\Support\Facades\Hash;
@@ -13,17 +13,12 @@ use Illuminate\Support\Facades\Hash;
 class ApiAuthService implements ApiAuthServiceInterface
 {
     public function __construct(
-        //
+        private readonly ApiAuthRepositoryInterface $apiAuthRepository
     ) {}
 
     public function register(RegisterDTO $userDTO): AuthDTO
     {
-        $user = User::create([
-            'name' => $userDTO->name,
-            'email' => $userDTO->email,
-            'password' => Hash::make($userDTO->password),
-            'role' => UserRole::USER->value
-        ]);
+        $user = $this->apiAuthRepository->register($userDTO);
 
         $token = $user->createToken('api_token')->plainTextToken;
 
@@ -41,11 +36,9 @@ class ApiAuthService implements ApiAuthServiceInterface
 
     public function login(LoginDTO $userDTO): AuthDTO
     {
-        $user = User::query()
-            ->where('email', $userDTO->email)
-            ->first();
+        $user = $this->apiAuthRepository->login($userDTO);
 
-        if (! $user || ! Hash::check($userDTO->password, $user->password)) {
+        if (!$user || !Hash::check($userDTO->getPassword(), $user->password)) {
             throw new Exception('Invalid email or password');
         }
 
@@ -65,6 +58,6 @@ class ApiAuthService implements ApiAuthServiceInterface
 
     public function logout(User $user): void
     {
-        $user->tokens()->delete();
+        $this->apiAuthRepository->logout($user);
     }
 }

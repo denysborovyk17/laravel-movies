@@ -1,30 +1,15 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace App\Repositories\Interfaces;
 
 use App\Models\Movie;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 interface MovieRepositoryInterface
 {
-    public function listPublic(?string $search, int $perPage): LengthAwarePaginator;
+    public function listPublic(?string $search = null, int $perPage): LengthAwarePaginator;
 
-    public function listAdmin(?string $search, ?string $status, int $perPage): LengthAwarePaginator;
+    public function listAdmin(?string $search = null, ?string $status, int $perPage): LengthAwarePaginator;
 
-    public function allApi(): Collection;
-
-    public function findApi(int $id): Movie|null;
-
-    public function createApi(array $data): Movie;
-
-    public function updateApi(Movie $movie, array $data): Movie;
-
-    public function softDelete(Movie $movie): bool;
-
-    public function restore(int $id): Movie|null;
-
-    public function forceDelete(int $id): bool;
-
-    public function getTrashed(): Collection;
+    public function store(array $data): Movie;
 }

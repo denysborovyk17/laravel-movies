@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Enums\{HttpStatus, CacheTtl};
 use App\Exceptions\ApiException;
 use App\Models\{Movie, Director};
-use App\Repositories\Interfaces\MovieRepositoryInterface;
+use App\Repositories\Interfaces\ApiMovieRepositoryInterface;
 use App\Services\Interfaces\ApiMovieServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
@@ -14,22 +14,22 @@ use Illuminate\Support\Str;
 class ApiMovieService implements ApiMovieServiceInterface
 {
     public function __construct(
-        private readonly MovieRepositoryInterface $movieRepository
+        private readonly ApiMovieRepositoryInterface $apiMovieRepositoryInterface
     ) {}
 
     public function getAllApi(): Collection
     {
         return Cache::remember('movies_all', CacheTtl::SHORT->value, function () {
-            return $this->movieRepository->allApi();
+            return $this->apiMovieRepositoryInterface->allApi();
         });
     }
 
     public function getByIdApi(int $movieId): Movie|null
     {
         return Cache::remember("movies_{$movieId}", CacheTtl::SHORT->value, function () use ($movieId) {
-            $movie = $this->movieRepository->findApi($movieId);
+            $movie = $this->apiMovieRepositoryInterface->findApi($movieId);
 
-            if (! $movie) {
+            if (!$movie) {
                 throw new ApiException("Movie with ID $movieId not found", HttpStatus::NOT_FOUND->value);
             }
 
@@ -40,7 +40,7 @@ class ApiMovieService implements ApiMovieServiceInterface
     public function getTrashed(): Collection
     {
         return Cache::remember('movies_trash', CacheTtl::SHORT->value, function () {
-            return $this->movieRepository->getTrashed();
+            return $this->apiMovieRepositoryInterface->getTrashed();
         });
     }
 
@@ -53,27 +53,27 @@ class ApiMovieService implements ApiMovieServiceInterface
 
         $slug = Str::slug($data['title']);
         $data['slug'] = $slug;
-        $movie = $this->movieRepository->createApi($data);
+        $movie = $this->apiMovieRepositoryInterface->createApi($data);
 
         Cache::forget('movies_all');
 
         $movieId = $movie->id;
 
         return Cache::tags(['movies'])->remember("movie_{$movieId}", CacheTtl::MEDIUM->value, function () use ($movieId) {
-            return $this->movieRepository->findApi($movieId);
+            return $this->apiMovieRepositoryInterface->findApi($movieId);
         });
     }
 
     public function updateApi(int $movieId, array $data): Movie|null
     {
-        $movie = $this->movieRepository->findApi($movieId);
-        if (! $movie) {
+        $movie = $this->apiMovieRepositoryInterface->findApi($movieId);
+        if (!$movie) {
             return null;
         }
 
         $slug = Str::slug($data['title']);
         $data['slug'] = $slug;
-        $updatedMovie = $this->movieRepository->updateApi($movie, $data);
+        $updatedMovie = $this->apiMovieRepositoryInterface->updateApi($movieId, $data);
 
         Cache::forget('movies_all');
 
@@ -82,12 +82,12 @@ class ApiMovieService implements ApiMovieServiceInterface
 
     public function softDeleteApi(int $movieId): bool
     {
-        $movie = $this->movieRepository->findApi($movieId);
-        if (! $movie) {
+        $movie = $this->apiMovieRepositoryInterface->findApi($movieId);
+        if (!$movie) {
             return false;
         }
 
-        $deletedMovie = $this->movieRepository->softDelete($movie);
+        $deletedMovie = $this->apiMovieRepositoryInterface->softDelete($movieId);
 
         Cache::forget('movies_all');
         Cache::forget("movies_{$movieId}");
@@ -97,8 +97,8 @@ class ApiMovieService implements ApiMovieServiceInterface
 
     public function restoreApi(int $movieId): Movie|null
     {
-        $movie = $this->movieRepository->restore($movieId);
-        if (! $movie) {
+        $movie = $this->apiMovieRepositoryInterface->restore($movieId);
+        if (!$movie) {
             return null;
         }
 
@@ -110,8 +110,8 @@ class ApiMovieService implements ApiMovieServiceInterface
 
     public function forceDeleteApi(int $movieId): bool
     {
-        $deletedMovie = $this->movieRepository->forceDelete($movieId);
-        if (! $deletedMovie) {
+        $deletedMovie = $this->apiMovieRepositoryInterface->forceDelete($movieId);
+        if (!$deletedMovie) {
             return false;
         }
 

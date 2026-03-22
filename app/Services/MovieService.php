@@ -13,24 +13,24 @@ use Illuminate\Support\Str;
 class MovieService implements MovieServiceInterface
 {
     public function __construct(
-        private readonly MovieRepositoryInterface $movieRepository
+        private readonly MovieRepositoryInterface $movieRepositoryInterface
     ) {}
 
     public function listPublic(?string $search, int $perPage = 12): LengthAwarePaginator
     {
-        return $this->movieRepository->listPublic($search, $perPage);
+        return $this->movieRepositoryInterface->listPublic($search, $perPage);
     }
 
     public function listAdmin(?string $search, ?string $status, int $perPage = 12): LengthAwarePaginator
     {
-        return $this->movieRepository->listAdmin($search, $status, $perPage);
+        return $this->movieRepositoryInterface->listAdmin($search, $status, $perPage);
     }
 
     public function store(array $data): Movie
     {
         $data = $this->prepareData($data);
 
-        return Movie::create($data);
+        return $this->movieRepositoryInterface->store($data);
     }
 
     public function update(Movie $movie, array $data): bool
