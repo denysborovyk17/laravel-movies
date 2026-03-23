@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\Admin\MovieSearchFilterDto as AdminMovieSearchFilterDto;
+use App\Enums\MovieStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{StoreMovieRequest, UpdateMovieRequest};
 use App\Models\Movie;
-use App\Services\MovieService;
+use App\Services\Interfaces\MovieServiceInterface;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -16,7 +18,7 @@ class MovieController extends Controller
     use AuthorizesRequests;
 
     public function __construct(
-        private readonly MovieService $movieService
+        private readonly MovieServiceInterface $movieService
     ) {}
 
     private function prepareMovieData(Request $request): array
@@ -31,12 +33,13 @@ class MovieController extends Controller
 
     public function index(Request $request): View
     {
-        $movies = $this->movieService->listAdmin(
-            $request->input('search'),
-            $request->input('status')
+        $filter = new AdminMovieSearchFilterDto(
+            search: $request->input('search'),
+            status: $request->input('status') ? MovieStatus::from($request->input('status')) : null,
+            perPage: config('pagination.admin_per_page')
         );
-
-        $movies->appends($request->only(['search', 'status']));
+    
+        $movies = $this->movieService->listAdmin($filter);
 
         return view('admin.movies.index', compact('movies'));
     }
