@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Repositories;
+namespace App\Repositories\Api;
 
 use App\DTO\{AuthDto, RegisterDto, LoginDto, UserDataDto};
 use App\Enums\UserRole;

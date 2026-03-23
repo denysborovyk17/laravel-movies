@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
-interface DirectorRepositoryInterface
+interface ApiDirectorRepositoryInterface
 {
     //
 }
