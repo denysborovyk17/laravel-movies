@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{StoreMovieRequest, UpdateMovieRequest};
 use App\Http\Resources\{MovieCollection, MovieResource};
-use App\Models\Director;
 use App\Services\Interfaces\ApiMovieServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
@@ -44,9 +43,6 @@ class MovieController extends Controller
     public function store(StoreMovieRequest $request): MovieResource
     {
         $data = $request->validated();
-
-        $director = Director::firstOrCreate(['name' => $data['director']]);
-        $data['director_id'] = $director->id;
 
         $movie = $this->apiMovieService->createApi($data);
 
