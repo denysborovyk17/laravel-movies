@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Api\Auth;
 
-use App\DTO\Login;
+use App\DTO\LoginDto;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ApiLoginRequest extends FormRequest
@@ -28,8 +28,8 @@ class ApiLoginRequest extends FormRequest
         ];
     }
 
-    public function toDTO(): Login
+    public function toDTO(): LoginDto
     {
-        return Login::fromArray($this->validated());
+        return LoginDto::fromArray($this->validated());
     }
 }

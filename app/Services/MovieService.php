@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\DTO\Admin\MovieSearchFilterDto as AdminMovieSearchFilterDto;
 use App\Models\{Movie, Director};
 use App\Repositories\Interfaces\MovieRepositoryInterface;
 use App\Services\Interfaces\MovieServiceInterface;
@@ -21,9 +22,9 @@ class MovieService implements MovieServiceInterface
         return $this->movieRepositoryInterface->listPublic($search, $perPage);
     }
 
-    public function listAdmin(?string $search, ?string $status, int $perPage = 12): LengthAwarePaginator
+    public function listAdmin(AdminMovieSearchFilterDto $filter): LengthAwarePaginator
     {
-        return $this->movieRepositoryInterface->listAdmin($search, $status, $perPage);
+        return $this->movieRepositoryInterface->listAdmin($filter);
     }
 
     public function store(array $data): Movie

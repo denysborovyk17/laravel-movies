@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Enums\{HttpStatus, CacheTtl};
+use App\Enums\{CacheTtl};
 use App\Exceptions\MovieNotFoundException;
 use App\Models\{Movie, Director};
 use App\Repositories\Interfaces\ApiMovieRepositoryInterface;
@@ -24,7 +24,7 @@ class ApiMovieService implements ApiMovieServiceInterface
         });
     }
 
-    public function getByIdApi(int $movieId): Movie|null
+    public function getByIdApi(int $movieId): Movie
     {
         return Cache::remember("movies_{$movieId}", CacheTtl::SHORT->value, function () use ($movieId) {
             $movie = $this->apiMovieRepositoryInterface->findApi($movieId);

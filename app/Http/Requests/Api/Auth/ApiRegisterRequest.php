@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Api\Auth;
 
-use App\DTO\Register;
+use App\DTO\RegisterDto;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ApiRegisterRequest extends FormRequest
@@ -29,8 +29,8 @@ class ApiRegisterRequest extends FormRequest
         ];
     }
 
-    public function toDTO(): Register
+    public function toDTO(): RegisterDto
     {
-        return Register::fromArray($this->validated());
+        return RegisterDto::fromArray($this->validated());
     }
 }
