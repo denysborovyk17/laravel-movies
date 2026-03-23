@@ -6,6 +6,10 @@
 
 <h2>Admin Page Movies</h2>
 
+    <form action="{{ route('admin.movies.index') }}" method="GET">
+        <input type="text" name="search" value="{{ request('search') }}" placeholder="Serch on Title or Description">
+    </form>
+
     <a href="{{ route('admin.movies.create') }}">Create New Movie</a>
 
     <form action="{{ route('admin.movies.index') }}" method="GET">
