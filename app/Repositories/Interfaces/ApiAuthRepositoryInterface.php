@@ -2,14 +2,14 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\DTO\{Register, Login};
+use App\DTO\{RegisterDto, LoginDto};
 use App\Models\User;
 
 interface ApiAuthRepositoryInterface
 {
-    public function register(Register $userDTO): User;
+    public function register(RegisterDto $userDTO): User;
 
-    public function login(Login $userDTO): User;
+    public function login(LoginDto $userDTO): User;
 
     public function me(int $userId): User;
 

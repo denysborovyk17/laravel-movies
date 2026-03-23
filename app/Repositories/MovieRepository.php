@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\DTO\Admin\MovieSearchFilterDto as AdminMovieSearchFilterDto;
 use App\Models\Movie;
 use App\Repositories\Interfaces\MovieRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
@@ -23,19 +24,19 @@ class MovieRepository implements MovieRepositoryInterface
             ->paginate($perPage);
     }
 
-    public function listAdmin(?string $search = null, ?string $status = null, int $perPage = 12): LengthAwarePaginator
+    public function listAdmin(AdminMovieSearchFilterDto $filter): LengthAwarePaginator
     {
         return Movie::with('director')
-            ->when($status, fn($q) => $q->where('status', $status))
+            ->when($filter->hasStatus(), fn($q) => $q->where('status', $filter->getStatus()->value))
             ->when(
-                $search,
+                $filter->hasSearch(),
                 fn($q) => $q->where(
-                    fn($q) => $q->where('title', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%")
+                    fn($q) => $q->where('title', 'like', "%{$filter->getSearch()}%")
+                    ->orWhere('description', 'like', "%{$filter->getSearch()}%")
                 )
             )
             ->latest('year')
-            ->paginate($perPage);
+            ->paginate($filter->getPerPage());
     }
 
     public function store(array $data): Movie
