@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\DTO\LoginDto;
 use Illuminate\Foundation\Http\FormRequest;
 
 class LoginRequest extends FormRequest
@@ -37,5 +38,10 @@ class LoginRequest extends FormRequest
             'password.required' => 'Пароль обов\'язковий',
             'password.string' => 'Пароль має бути рядком',
         ];
+    }
+
+    public function toDTO(): LoginDto
+    {
+        return LoginDto::fromArray($this->validated());
     }
 }
