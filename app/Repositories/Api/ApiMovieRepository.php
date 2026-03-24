@@ -3,7 +3,7 @@
 namespace App\Repositories\Api;
 
 use App\Models\Movie;
-use App\Repositories\Interfaces\ApiMovieRepositoryInterface;
+use App\Repositories\Interfaces\Api\ApiMovieRepositoryInterface;
 use Illuminate\Database\Eloquent\Collection;
 
 class ApiMovieRepository implements ApiMovieRepositoryInterface

@@ -2,10 +2,10 @@
 
 namespace App\Repositories\Api;
 
-use App\DTO\{AuthDto, RegisterDto, LoginDto, UserDataDto};
+use App\DTO\{RegisterDto, LoginDto};
 use App\Enums\UserRole;
 use App\Models\User;
-use App\Repositories\Interfaces\ApiAuthRepositoryInterface;
+use App\Repositories\Interfaces\Api\ApiAuthRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
 
 class ApiAuthRepository implements ApiAuthRepositoryInterface

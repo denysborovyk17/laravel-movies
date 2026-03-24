@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace App\Repositories\Interfaces;
+namespace App\Repositories\Interfaces\Api;
 
 use App\DTO\{RegisterDto, LoginDto};
 use App\Models\User;

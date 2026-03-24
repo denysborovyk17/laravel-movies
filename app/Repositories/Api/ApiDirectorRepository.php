@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Api;
 
-use App\Repositories\Interfaces\ApiDirectorRepositoryInterface;
+use App\Repositories\Interfaces\Api\ApiDirectorRepositoryInterface;
 
 class ApiDirectorRepository implements ApiDirectorRepositoryInterface
 {
