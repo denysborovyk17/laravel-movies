@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\DTO\Admin\MovieDataDto;
 use App\DTO\Admin\MovieSearchFilterDto as AdminMovieSearchFilterDto;
 use App\Enums\MovieStatus;
 use App\Http\Controllers\Controller;
@@ -21,22 +22,12 @@ class MovieController extends Controller
         private readonly MovieServiceInterface $movieService
     ) {}
 
-    private function prepareMovieData(Request $request): array
-    {
-        $validated = $request->validated();
-
-        return array_merge($validated, [
-            'image_file' => $request->file('image'),
-            'remove_image' => $request->boolean('remove_image'),
-        ]);
-    }
-
     public function index(Request $request): View
     {
         $filter = new AdminMovieSearchFilterDto(
             search: $request->input('search'),
             status: $request->input('status') ? MovieStatus::from($request->input('status')) : null,
-            perPage: config('pagination.admin_per_page')
+            perPage: config('custom.pagination.admin_per_page')
         );
     
         $movies = $this->movieService->listAdmin($filter);
@@ -53,11 +44,11 @@ class MovieController extends Controller
 
     public function store(StoreMovieRequest $request): RedirectResponse
     {
-        $data = $this->prepareMovieData($request);
-
         $this->authorize('create', Movie::class);
 
-        $this->movieService->store($data);
+        $movieDTO = MovieDataDto::fromRequest($request);
+
+        $this->movieService->store($movieDTO);
 
         return redirect()->route('admin.movies.index')->with('success', 'Movie created successfully');
     }
@@ -71,11 +62,11 @@ class MovieController extends Controller
 
     public function update(UpdateMovieRequest $request, Movie $movie): RedirectResponse
     {
-        $data = $this->prepareMovieData($request);
-
         $this->authorize('update', $movie);
 
-        $this->movieService->update($movie, $data);
+        $movieDTO = MovieDataDto::fromRequest($request);
+
+        $this->movieService->update($movieDTO, $movie);
 
         return redirect()->route('admin.movies.index')->with('success', 'Movie updated successfully');
     }
