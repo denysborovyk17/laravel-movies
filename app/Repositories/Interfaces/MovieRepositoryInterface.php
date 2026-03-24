@@ -12,5 +12,7 @@ interface MovieRepositoryInterface
 
     public function listAdmin(AdminMovieSearchFilterDto $filter): LengthAwarePaginator;
 
+    public function getById(int $movieId): Movie;
+
     public function store(array $data): Movie;
 }

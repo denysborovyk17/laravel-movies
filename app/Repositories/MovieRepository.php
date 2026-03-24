@@ -39,6 +39,11 @@ class MovieRepository implements MovieRepositoryInterface
             ->paginate($filter->getPerPage());
     }
 
+    public function getById(int $movieId): Movie
+    {
+        return Movie::find($movieId);
+    }
+
     public function store(array $data): Movie
     {
         return Movie::create($data);
