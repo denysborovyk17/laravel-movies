@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
-use App\Repositories\{ApiMovieRepository, ApiDirectorRepository, ApiAuthRepository};
-use App\Repositories\Interfaces\{ApiMovieRepositoryInterface, ApiAuthRepositoryInterface, ApiDirectorRepositoryInterface};
-use App\Repositories\Interfaces\MovieRepositoryInterface;
-use App\Repositories\MovieRepository;
-use App\Services\{ApiAuthService, ApiDirectorService, ApiMovieService, MovieService};
-use App\Services\Interfaces\{ApiAuthServiceInterface, ApiDirectorServiceInterface, ApiMovieServiceInterface, MovieServiceInterface};
+use App\Repositories\Api\{ApiAuthRepository, ApiDirectorRepository, ApiMovieRepository};
+use App\Repositories\{AuthRepository, DirectorRepository, MovieRepository};
+use App\Repositories\Interfaces\Api\{ApiAuthRepositoryInterface, ApiDirectorRepositoryInterface, ApiMovieRepositoryInterface};
+use App\Repositories\Interfaces\{AuthRepositoryInterface, DirectorRepositoryInterface, MovieRepositoryInterface};
+use App\Services\Api\{ApiAuthService, ApiMovieService};
+use App\Services\{AuthService, MovieService};
+use App\Services\Interfaces\Api\{ApiAuthServiceInterface, ApiMovieServiceInterface};
+use App\Services\Interfaces\{AuthServiceInterface, MovieServiceInterface};
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,11 +23,14 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(MovieRepositoryInterface::class, MovieRepository::class);
         $this->app->bind(MovieServiceInterface::class, MovieService::class);
 
-        $this->app->bind(ApiDirectorRepositoryInterface::class, ApiDirectorRepository::class);
-        $this->app->bind(ApiDirectorServiceInterface::class, ApiDirectorService::class);
-        
         $this->app->bind(ApiAuthRepositoryInterface::class, ApiAuthRepository::class);
         $this->app->bind(ApiAuthServiceInterface::class, ApiAuthService::class);
+        
+        $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
+        $this->app->bind(AuthServiceInterface::class, AuthService::class);
+
+        $this->app->bind(ApiDirectorRepositoryInterface::class, ApiDirectorRepository::class);
+        $this->app->bind(DirectorRepositoryInterface::class, DirectorRepository::class);
     }
 
     public function boot(): void
