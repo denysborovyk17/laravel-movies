@@ -1,7 +1,6 @@
 <?php declare(strict_types=1);
 
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\MovieController;
+use App\Http\Controllers\Api\{AuthController, MovieController};
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('auth')->group(function (): void {
