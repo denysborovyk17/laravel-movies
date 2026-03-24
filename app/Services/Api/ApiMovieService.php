@@ -2,7 +2,6 @@
 
 namespace App\Services\Api;
 
-use App\Enums\{CacheTtl};
 use App\Exceptions\MovieNotFoundException;
 use App\Models\{Movie, Director};
 use App\Repositories\Interfaces\Api\ApiMovieRepositoryInterface;
@@ -19,14 +18,14 @@ class ApiMovieService implements ApiMovieServiceInterface
 
     public function getAllApi(): Collection
     {
-        return Cache::remember('movies_all', CacheTtl::SHORT->value, function () {
+        return Cache::remember('movies_all', config('custom.cache_ttl.short'), function () {
             return $this->apiMovieRepository->allApi();
         });
     }
 
     public function getByIdApi(int $movieId): Movie
     {
-        return Cache::remember("movies_{$movieId}", CacheTtl::SHORT->value, function () use ($movieId) {
+        return Cache::remember("movies_{$movieId}", config('custom.cache_ttl.short'), function () use ($movieId) {
             $movie = $this->apiMovieRepository->findApi($movieId);
 
             if (!$movie) {
@@ -39,7 +38,7 @@ class ApiMovieService implements ApiMovieServiceInterface
 
     public function getTrashed(): Collection
     {
-        return Cache::remember('movies_trash', CacheTtl::SHORT->value, function () {
+        return Cache::remember('movies_trash', config('custom.cache_ttl.short'), function () {
             return $this->apiMovieRepository->getTrashed();
         });
     }
@@ -57,7 +56,7 @@ class ApiMovieService implements ApiMovieServiceInterface
 
         $movieId = $movie->id;
 
-        return Cache::tags(['movies'])->remember("movie_{$movieId}", CacheTtl::MEDIUM->value, function () use ($movieId) {
+        return Cache::tags(['movies'])->remember("movie_{$movieId}", config('custom.cache_ttl.medium'), function () use ($movieId) {
             return $this->apiMovieRepository->findApi($movieId);
         });
     }
