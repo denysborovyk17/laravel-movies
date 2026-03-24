@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{StoreMovieRequest, UpdateMovieRequest};
 use App\Http\Resources\{MovieCollection, MovieResource};
-use App\Services\Interfaces\ApiMovieServiceInterface;
+use App\Services\Interfaces\Api\ApiMovieServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
 
