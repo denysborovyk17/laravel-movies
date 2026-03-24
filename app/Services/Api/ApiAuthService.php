@@ -3,8 +3,8 @@
 namespace App\Services\Api;
 
 use App\DTO\{AuthDto, LoginDto, RegisterDto, UserDataDto};
-use App\Repositories\Interfaces\ApiAuthRepositoryInterface;
-use App\Services\Interfaces\ApiAuthServiceInterface;
+use App\Repositories\Interfaces\Api\ApiAuthRepositoryInterface;
+use App\Services\Interfaces\Api\ApiAuthServiceInterface;
 use Exception;
 use Illuminate\Support\Facades\Hash;
 
