@@ -9,7 +9,7 @@ class MovieSearchFilterDto
     public function __construct(
         private ?string $search = null,
         private ?MovieStatus $status = null,
-        private int $perPage = 12
+        private int $perPage
     ) {}
     
     public function getSearch(): string|null
