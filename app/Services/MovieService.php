@@ -2,50 +2,45 @@
 
 namespace App\Services;
 
+use App\DTO\Admin\MovieDataDto;
 use App\DTO\Admin\MovieSearchFilterDto as AdminMovieSearchFilterDto;
-use App\Models\{Movie, Director};
+use App\Models\{Movie};
+use App\Repositories\Interfaces\DirectorRepositoryInterface;
 use App\Repositories\Interfaces\MovieRepositoryInterface;
 use App\Services\Interfaces\MovieServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class MovieService implements MovieServiceInterface
 {
     public function __construct(
-        private readonly MovieRepositoryInterface $movieRepositoryInterface
+        private readonly MovieRepositoryInterface $movieRepository,
+        private readonly DirectorRepositoryInterface $directorRepository
     ) {}
 
     public function listPublic(?string $search, int $perPage = 12): LengthAwarePaginator
     {
-        return $this->movieRepositoryInterface->listPublic($search, $perPage);
+        return $this->movieRepository->listPublic($search, $perPage);
     }
 
     public function listAdmin(AdminMovieSearchFilterDto $filter): LengthAwarePaginator
     {
-        return $this->movieRepositoryInterface->listAdmin($filter);
+        return $this->movieRepository->listAdmin($filter);
     }
 
-    public function store(array $data): Movie
+    public function store(MovieDataDto $movieDTO): Movie
     {
-        $data = $this->prepareData($data);
+        $data = $this->buildData($movieDTO, null);
 
-        return $this->movieRepositoryInterface->store($data);
+        return $this->movieRepository->store($data);
     }
 
-    public function update(Movie $movie, array $data): bool
-    {
-        $data = $this->prepareData($data, $movie);
+    public function update(MovieDataDto $movieDTO, Movie $movie): bool|null
+    {    
+        $data = $this->buildData($movieDTO, $movie);
 
-        $filtered = [];
-        foreach ($data as $field => $value) {
-            if ($field === 'image' || Gate::allows('updateField', [$movie, $field])) {
-                $filtered[$field] = $value;
-            }
-        }
-
-        return $movie->update($data, $filtered);
+        return $movie->update($data);
     }
 
     public function delete(Movie $movie): bool
@@ -57,45 +52,58 @@ class MovieService implements MovieServiceInterface
         return $movie->delete();
     }
 
-    protected function prepareData(array $data, ?Movie $movie = null): array
+    public function buildData(MovieDataDto $movieDTO, ?Movie $movie): array
     {
-        if (isset($data['director'])) {
-            $director = Director::firstOrCreate(['name' => $data['director']]);
-            $data['director_id'] = $director->id;
-            unset($data['director']);
-        }
+        $director = $movieDTO->getDirector();
+    
+        return [
+            'title' => $movieDTO->getTitle(),
+            'director_id' => $this->directorRepository->store($director)->id,
+            'description' => $movieDTO->getDescription(),
+            'year' => $movieDTO->getYear(),
+            'genre' => $movieDTO->getGenre(),
+            'rating' => $movieDTO->getRating(),
+            'status' => $movieDTO->getStatus(),
 
-        if (! isset($movie) || $movie->title !== $data['title']) {
-            $slug = Str::slug($data['title']);
+            'slug' => $this->generateSlug($movieDTO->getTitle(), $movie),
+            'image' => $this->handleImage($movieDTO, $movie)
+        ];
+    }
+
+    public function generateSlug(string $title, ?Movie $movie)
+    {
+        if (!$movie || $title !== $movie->title) {
+            $slug = Str::slug($title);
             $original = $slug;
             $counter = 1;
 
             while (Movie::where('slug', $slug)
-                ->when($movie, fn($q) => $q->where('id', '!=', $movie->id))
-                ->exists()
+                ->when($movie, fn($q) => $q->where('id', '!=', $movie))
+                ->exists()    
             ) {
-                $slug = $original . '-' . $counter++;
+                $slug = $original . '-' . $counter;
             }
 
-            $data['slug'] = $slug;
+            return $slug;   
         }
+        return $movie?->slug;
+    }
 
-        if (! empty($data['remove_image']) && $movie?->image) {
-            Storage::disk('public')->delete($movie->image);
-            $data['image'] = null;
-        }
-
-        if (! empty($data['image_file'])) {
+    public function handleImage(MovieDataDto $movieDTO, ?Movie $movie)
+    {
+        if (!empty($movieDTO->getImageFile())) {
             if ($movie?->image) {
                 Storage::disk('public')->delete($movie->image);
             }
-            $data['image'] = $data['image_file']->store('admin', 'public');
+
+            return $movieDTO->getImageFile()->store('admin', 'public');
+        }
+        
+        if (!empty($movieDTO->getRemoveImage()) && $movie?->image) {
+            Storage::disk('public')->delete($movie->image);
+            return null;
         }
 
-        if ($movie && ! array_key_exists('image', $data)) {
-            $data['image'] = $movie->image;
-        }
-
-        return $data;
+        return $movie?->image;
     }
 }
