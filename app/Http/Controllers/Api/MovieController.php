@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\DTO\Admin\MovieDataDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{StoreMovieRequest, UpdateMovieRequest};
 use App\Http\Resources\{MovieCollection, MovieResource};
@@ -33,18 +34,14 @@ class MovieController extends Controller
     {
         $movie = $this->apiMovieService->getByIdApi($movieId);
 
-        if (!$movie) {
-            return response()->json(['message' => 'Movie not found'], 404);
-        }
-
         return new MovieResource($movie);
     }
 
     public function store(StoreMovieRequest $request): MovieResource
     {
-        $data = $request->validated();
+        $movieDTO = MovieDataDto::fromRequest($request);
 
-        $movie = $this->apiMovieService->createApi($data);
+        $movie = $this->apiMovieService->createApi($movieDTO);
 
         return new MovieResource($movie);
     }
@@ -55,48 +52,38 @@ class MovieController extends Controller
 
         Gate::authorize('update', $movie);
 
-        $movie = $this->apiMovieService->updateApi($movieId, $request->validated());
+        $movieDTO = MovieDataDto::fromRequest($request);
 
-        if (!$movie) {
-            return response()->json(['message' => 'Movie not found'], 404);
-        }
+        $updatedMovie = $this->apiMovieService->updateApi($movieDTO, $movieId);
 
-        return new MovieResource($movie);
+        return new MovieResource($updatedMovie);
     }
 
     public function destroy(int $movieId): JsonResponse
     {
         $movie = $this->apiMovieService->getByIdApi($movieId);
 
-        Gate::authorize('update', $movie);
+        Gate::authorize('delete', $movie);
 
-        $deleted = $this->apiMovieService->softDeleteApi($movieId);
-
-        if (!$deleted) {
-            return response()->json(['message' => 'Movie not found'], 404);
-        }
+        $this->apiMovieService->softDeleteApi($movieId);
 
         return response()->json(['message' => 'Deleted']);
     }
 
     public function restore(int $movieId): JsonResponse
     {
-        $result = $this->apiMovieService->restoreApi($movieId);
+        $movie = $this->apiMovieService->getByIdApi($movieId);
 
-        if (!$result) {
-            return response()->json(['success' => false, 'message' => 'Not found'], 404);
-        }
+        Gate::authorize('restore', $movie);
+    
+        $this->apiMovieService->restoreApi($movieId);
 
         return response()->json(['success' => true]);
     }
 
     public function forceDelete(int $movieId): JsonResponse
     {
-        $deleted = $this->apiMovieService->forceDeleteApi($movieId);
-
-        if (!$deleted) {
-            return response()->json(['success' => false, 'message' => 'Not found'], 404);
-        }
+        $this->apiMovieService->forceDeleteApi($movieId);
 
         return response()->json(['success' => true]);
     }
