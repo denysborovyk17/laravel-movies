@@ -4,12 +4,13 @@ namespace App\Services\Interfaces;
 
 use App\DTO\Admin\MovieDataDto;
 use App\DTO\Admin\MovieSearchFilterDto as AdminMovieSearchFilterDto;
+use App\DTO\MovieSearchDto;
 use App\Models\Movie;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 interface MovieServiceInterface
 {
-    public function listPublic(?string $search, int $perPage): LengthAwarePaginator;
+    public function listPublic(MovieSearchDto $search): LengthAwarePaginator;
 
     public function listAdmin(AdminMovieSearchFilterDto $filter): LengthAwarePaginator;
 
