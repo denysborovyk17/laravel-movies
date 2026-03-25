@@ -2,29 +2,31 @@
 
 namespace App\Repositories;
 
-use App\DTO\Admin\MovieSearchFilterDto as AdminMovieSearchFilterDto;
+use App\DTO\Admin\MovieSearchFilterDto;
+use App\DTO\MovieSearchDto;
+use App\Enums\MovieStatus;
 use App\Models\Movie;
 use App\Repositories\Interfaces\MovieRepositoryInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class MovieRepository implements MovieRepositoryInterface
 {
-    public function listPublic(?string $search = null, int $perPage = 12): LengthAwarePaginator
+    public function listPublic(MovieSearchDto $search): LengthAwarePaginator
     {
         return Movie::with('director')
-            ->where('status', 'published')
+            ->where('status', MovieStatus::PUBLISHED->value)
             ->when(
-                $search,
+                $search->hasSearch(),
                 fn($q) => $q->where(
-                    fn($q) => $q->where('title', 'like', "%{$search}%")
-                        ->orWhere('description', 'like', "%{$search}%")
+                    fn($q) => $q->where('title', 'like', "%{$search->getSearch()}%")
+                        ->orWhere('description', 'like', "%{$search->getSearch()}%")
                 )
             )
             ->latest('year')
-            ->paginate($perPage);
+            ->paginate($search->getPerPage());
     }
 
-    public function listAdmin(AdminMovieSearchFilterDto $filter): LengthAwarePaginator
+    public function listAdmin(MovieSearchFilterDto $filter): LengthAwarePaginator
     {
         return Movie::with('director')
             ->when($filter->hasStatus(), fn($q) => $q->where('status', $filter->getStatus()->value))
@@ -32,7 +34,7 @@ class MovieRepository implements MovieRepositoryInterface
                 $filter->hasSearch(),
                 fn($q) => $q->where(
                     fn($q) => $q->where('title', 'like', "%{$filter->getSearch()}%")
-                    ->orWhere('description', 'like', "%{$filter->getSearch()}%")
+                        ->orWhere('description', 'like', "%{$filter->getSearch()}%")
                 )
             )
             ->latest('year')
