@@ -2,8 +2,10 @@
 
 namespace App\Services\Api;
 
+use App\DTO\Admin\MovieDataDto;
 use App\Exceptions\MovieNotFoundException;
 use App\Models\{Movie, Director};
+use App\Repositories\Interfaces\Api\ApiDirectorRepositoryInterface;
 use App\Repositories\Interfaces\Api\ApiMovieRepositoryInterface;
 use App\Services\Interfaces\Api\ApiMovieServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
@@ -13,7 +15,8 @@ use Illuminate\Support\Str;
 class ApiMovieService implements ApiMovieServiceInterface
 {
     public function __construct(
-        private readonly ApiMovieRepositoryInterface $apiMovieRepository
+        private readonly ApiMovieRepositoryInterface $apiMovieRepository,
+        private readonly ApiDirectorRepositoryInterface $apiDirectorRepository
     ) {}
 
     public function getAllApi(): Collection
@@ -43,53 +46,46 @@ class ApiMovieService implements ApiMovieServiceInterface
         });
     }
 
-    public function createApi(array $data): Movie
+    public function createApi(MovieDataDto $movieDTO): Movie
     {
-        $director = Director::create(['name' => $data['director']]);
-        $data['director_id'] = $director->id;
+        $data = $this->buildDataApi($movieDTO, null);
 
-        $slug = Str::slug($data['title']);
-        $data['slug'] = $slug;
         $movie = $this->apiMovieRepository->createApi($data);
 
         Cache::forget('movies_all');
 
-        $movieId = $movie->id;
-
-        return Cache::tags(['movies'])->remember("movie_{$movieId}", config('custom.cache_ttl.medium'), function () use ($movieId) {
-            return $this->apiMovieRepository->findApi($movieId);
-        });
+        return $movie;
     }
 
-    public function updateApi(int $movieId, array $data): Movie|null
+    public function updateApi(MovieDataDto $movieDTO, int $movieId): Movie
     {
         $movie = $this->apiMovieRepository->findApi($movieId);
+
         if (!$movie) {
-            return null;
+            throw new MovieNotFoundException($movieId);
         }
-
-        $slug = Str::slug($data['title']);
-        $data['slug'] = $slug;
-        $updatedMovie = $this->apiMovieRepository->updateApi($movieId, $data);
-
-        Cache::forget('movies_all');
-
-        return $updatedMovie;
-    }
-
-    public function softDeleteApi(int $movieId): bool
-    {
-        $movie = $this->apiMovieRepository->findApi($movieId);
-        if (!$movie) {
-            return false;
-        }
-
-        $deletedMovie = $this->apiMovieRepository->softDelete($movieId);
+        
+        $data = $this->buildDataApi($movieDTO, $movie);
 
         Cache::forget('movies_all');
         Cache::forget("movies_{$movieId}");
+        
+        $movie->update($data);
 
-        return $deletedMovie;
+        return $movie;
+    }
+
+    public function softDeleteApi(int $movieId): void
+    {
+        $movie = $this->apiMovieRepository->findApi($movieId);
+        if (!$movie) {
+            throw new MovieNotFoundException($movieId);
+        }
+
+        $this->apiMovieRepository->softDelete($movieId);
+
+        Cache::forget('movies_all');
+        Cache::forget("movies_{$movieId}");
     }
 
     public function restoreApi(int $movieId): Movie|null
@@ -116,5 +112,40 @@ class ApiMovieService implements ApiMovieServiceInterface
         Cache::forget("movies_{$movieId}");
 
         return true;
+    }
+
+    public function buildDataApi(MovieDataDto $movieDTO, ?Movie $movie): array
+    {
+        $director = $this->apiDirectorRepository->findOrCreate($movieDTO->getDirector());
+    
+        return [
+            'title' => $movieDTO->getTitle(),
+            'director_id' => $director->id,
+            'slug' => $this->generateSlug($movieDTO->getTitle(), $movie),
+            'description' => $movieDTO->getDescription(),
+            'year' => $movieDTO->getYear(),
+            'genre' => $movieDTO->getGenre(),
+            'rating' => $movieDTO->getRating(),
+            'status' => $movieDTO->getStatus(),
+        ];
+    }
+
+    public function generateSlug(string $title, ?Movie $movie): string
+    {
+        if (!$movie || $title !== $movie->title) {
+            $slug = trim(Str::slug($title));
+            $original = $slug;
+            $counter = 1;
+
+            while (Movie::where('slug', $slug)
+                ->when($movie, fn($q) => $q->where('id', '!=', $movie->id))
+                ->exists()
+            ) {
+                $slug = $original . '-' . $counter++;
+            }
+            
+            return $slug;
+        }
+        return $movie?->slug;
     }
 }
