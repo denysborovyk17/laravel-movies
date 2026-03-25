@@ -2,7 +2,7 @@
 
 namespace App\Services\Interfaces\Api;
 
-use App\DTO\{AuthDto, LoginDto, RegisterDto, UserDataDto};
+use App\DTO\Auth\{AuthDto, LoginDto, RegisterDto, UserDataDto};
 
 interface ApiAuthServiceInterface
 {

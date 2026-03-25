@@ -2,7 +2,7 @@
 
 namespace App\Services\Api;
 
-use App\DTO\{AuthDto, LoginDto, RegisterDto, UserDataDto};
+use App\DTO\Auth\{AuthDto, LoginDto, RegisterDto, UserDataDto};
 use App\Repositories\Interfaces\Api\ApiAuthRepositoryInterface;
 use App\Services\Interfaces\Api\ApiAuthServiceInterface;
 use Exception;
