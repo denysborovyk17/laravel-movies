@@ -2,7 +2,7 @@
 
 namespace App\Repositories\Interfaces\Api;
 
-use App\DTO\{RegisterDto, LoginDto};
+use App\DTO\Auth\{RegisterDto, LoginDto};
 use App\Models\User;
 
 interface ApiAuthRepositoryInterface

@@ -2,8 +2,7 @@
 
 namespace App\Repositories\Api;
 
-use App\DTO\{RegisterDto, LoginDto};
-use App\Enums\UserRole;
+use App\DTO\Auth\{RegisterDto, LoginDto};
 use App\Models\User;
 use App\Repositories\Interfaces\Api\ApiAuthRepositoryInterface;
 use Illuminate\Support\Facades\Hash;
@@ -15,8 +14,7 @@ class ApiAuthRepository implements ApiAuthRepositoryInterface
         return User::create([
             'name' => $userDTO->getName(),
             'email' => $userDTO->getEmail(),
-            'password' => Hash::make($userDTO->getPassword()),
-            'role' => UserRole::USER->value
+            'password' => Hash::make($userDTO->getPassword())
         ]);
     }
 
