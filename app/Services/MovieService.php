@@ -3,7 +3,8 @@
 namespace App\Services;
 
 use App\DTO\Admin\MovieDataDto;
-use App\DTO\Admin\MovieSearchFilterDto as AdminMovieSearchFilterDto;
+use App\DTO\Admin\MovieSearchFilterDto;
+use App\DTO\MovieSearchDto;
 use App\Models\{Movie};
 use App\Repositories\Interfaces\DirectorRepositoryInterface;
 use App\Repositories\Interfaces\MovieRepositoryInterface;
@@ -19,12 +20,12 @@ class MovieService implements MovieServiceInterface
         private readonly DirectorRepositoryInterface $directorRepository
     ) {}
 
-    public function listPublic(?string $search, int $perPage = 12): LengthAwarePaginator
+    public function listPublic(MovieSearchDto $search): LengthAwarePaginator
     {
-        return $this->movieRepository->listPublic($search, $perPage);
+        return $this->movieRepository->listPublic($search);
     }
 
-    public function listAdmin(AdminMovieSearchFilterDto $filter): LengthAwarePaginator
+    public function listAdmin(MovieSearchFilterDto $filter): LengthAwarePaginator
     {
         return $this->movieRepository->listAdmin($filter);
     }
@@ -58,7 +59,7 @@ class MovieService implements MovieServiceInterface
     
         return [
             'title' => $movieDTO->getTitle(),
-            'director_id' => $this->directorRepository->store($director)->id,
+            'director_id' => $this->directorRepository->findOrCreate($director)->id,
             'description' => $movieDTO->getDescription(),
             'year' => $movieDTO->getYear(),
             'genre' => $movieDTO->getGenre(),
@@ -73,7 +74,7 @@ class MovieService implements MovieServiceInterface
     public function generateSlug(string $title, ?Movie $movie)
     {
         if (!$movie || $title !== $movie->title) {
-            $slug = Str::slug($title);
+            $slug = trim(Str::slug($title));
             $original = $slug;
             $counter = 1;
 
@@ -81,7 +82,7 @@ class MovieService implements MovieServiceInterface
                 ->when($movie, fn($q) => $q->where('id', '!=', $movie))
                 ->exists()    
             ) {
-                $slug = $original . '-' . $counter;
+                $slug = $original . '-' . $counter++;
             }
 
             return $slug;   
