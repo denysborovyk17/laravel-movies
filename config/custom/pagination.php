@@ -2,4 +2,5 @@
 
 return [
     'admin_per_page' => 12,
+    'public_per_page' => 3,
 ];
