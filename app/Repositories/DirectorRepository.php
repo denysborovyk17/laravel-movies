@@ -9,6 +9,6 @@ class DirectorRepository implements DirectorRepositoryInterface
 {
     public function store(string $name): Director
     {
-        return Director::create(['name' => $name]);
+        return Director::firstOrCreate(['name' => $name]);
     }
 }
