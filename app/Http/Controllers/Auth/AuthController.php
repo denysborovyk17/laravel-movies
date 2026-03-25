@@ -2,29 +2,24 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{RegisterRequest, LoginRequest};
-use App\Models\User;
+use App\Repositories\Interfaces\AuthRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        private readonly AuthRepositoryInterface $authRepository
+    ) {}
+
     public function register(RegisterRequest $request): RedirectResponse
     {
-        $userDTO = $request->toDTO();
-
-        $user = User::create([
-            'name' => $userDTO->name,
-            'email' => $userDTO->email,
-            'password' => Hash::make($userDTO->password),
-            'role' => UserRole::USER->value,
-        ]);
+        $user = $this->authRepository->register($request->toDTO());
 
         Auth::login($user);
 
