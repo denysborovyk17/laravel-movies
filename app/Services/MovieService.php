@@ -55,11 +55,11 @@ class MovieService implements MovieServiceInterface
 
     public function buildData(MovieDataDto $movieDTO, ?Movie $movie): array
     {
-        $director = $movieDTO->getDirector();
+        $director = $this->directorRepository->findOrCreate($movieDTO->getDirector());
     
         return [
             'title' => $movieDTO->getTitle(),
-            'director_id' => $this->directorRepository->findOrCreate($director)->id,
+            'director_id' => $director->id,
             'description' => $movieDTO->getDescription(),
             'year' => $movieDTO->getYear(),
             'genre' => $movieDTO->getGenre(),
@@ -79,7 +79,7 @@ class MovieService implements MovieServiceInterface
             $counter = 1;
 
             while (Movie::where('slug', $slug)
-                ->when($movie, fn($q) => $q->where('id', '!=', $movie))
+                ->when($movie, fn($q) => $q->where('id', '!=', $movie->id))
                 ->exists()    
             ) {
                 $slug = $original . '-' . $counter++;
