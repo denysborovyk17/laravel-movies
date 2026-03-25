@@ -6,5 +6,5 @@ use App\Models\Director;
 
 interface DirectorRepositoryInterface
 {
-    public function store(string $name): Director;
+    public function findOrCreate(string $name): Director;
 }

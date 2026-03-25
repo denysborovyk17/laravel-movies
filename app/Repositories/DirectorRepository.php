@@ -7,8 +7,10 @@ use App\Repositories\Interfaces\DirectorRepositoryInterface;
 
 class DirectorRepository implements DirectorRepositoryInterface
 {
-    public function store(string $name): Director
+    public function findOrCreate(string $name): Director
     {
-        return Director::firstOrCreate(['name' => $name]);
+        $trimmedName = trim($name);
+    
+        return Director::firstOrCreate(['name' => $trimmedName]);
     }
 }
