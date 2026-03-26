@@ -3,23 +3,31 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\JsonApi\JsonApiResource;
 
-class MovieResource extends MovieBaseResource
+class MovieResource extends JsonApiResource
 {
     public function toArray(Request $request): array
     {
         return [
-            'title' => $this->title,
-            'director_id' => $this->director_id,
-            'slug' => $this->slug,
-            'description' => $this->description,
-            'year' => $this->year,
-            'genre' => $this->genre,
-            'rating' => $this->rating,
-            'status' => $this->status,
-            'admin_only' => $this->mergeWhen($request->user()?->role->value === 'admin', [
-                'ip' => $this->ip_address,
-            ]),
+            // 'admin_only' => $this->mergeWhen($request->user()->isAdmin(), [
+            //     'ip' => $this->ip_address,
+            // ]),
         ];
     }
+
+    public $attributes = [
+        'title',
+        'director',
+        'slug',
+        'description',
+        'year',
+        'genre',
+        'rating',
+        'status'
+    ];
+
+    public $relationships = [
+        //
+    ];
 }
