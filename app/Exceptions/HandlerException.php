@@ -10,8 +10,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Psr\Log\LoggerInterface;
 use Throwable;
 
 class HandlerException
@@ -24,18 +24,39 @@ class HandlerException
 
     public static function registerReporters(Exceptions $exceptions): void
     {
-        $exceptions->report(function (ApiException $e): bool {
+        $exceptions->report(function (ApiException $e, LoggerInterface $logger): bool {
             if ($e->status >= 400 && $e->status < 500) {
+                $logger->warning('API Client Error', [
+                    'message' => $e->getMessage(),
+                    'status' => $e->status,
+                    'errors' => $e->errors
+                ]);
                 return false;
             }
-
-            Log::error('Api Exception', [
+            
+            $logger->error('API Server Error', [
                 'message' => $e->getMessage(),
                 'status' => $e->status,
-                'errors' => $e->errors,
+                'errors' => $e->errors
             ]);
 
             return true;
+        });
+
+        $exceptions->report(function (Throwable $e, LoggerInterface $logger): void {
+
+            if ($e instanceof ApiException) {
+                return;
+            }
+
+            $logger->error('Unhandled Exception', [
+                'message' => $e->getMessage(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
+                'url' => request()->fullUrl(),
+                'method' => request()->method(),
+                'status' => HttpStatus::INTERNAL_SERVER_ERROR->value
+            ]);
         });
     }
 
@@ -90,13 +111,6 @@ class HandlerException
                 'message' => 'Validation error',
                 'errors' => $e->errors(),
             ], HttpStatus::UNPROCESSABLE_ENTITY->value);
-        });
-
-        $exceptions->render(function (Throwable $e): JsonResponse {
-            return response()->json([
-                'success' => false,
-                'message' => $e->getMessage(),
-            ], HttpStatus::INTERNAL_SERVER_ERROR->value);
         });
     }
 }
