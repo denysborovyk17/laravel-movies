@@ -16,6 +16,10 @@ use Throwable;
 
 class HandlerException
 {
+    public function __construct(
+        private readonly LoggerInterface $logger
+    ) {}
+
     public static function register(Exceptions $exceptions): void
     {
         static::registerReporters($exceptions);
@@ -24,9 +28,9 @@ class HandlerException
 
     public static function registerReporters(Exceptions $exceptions): void
     {
-        $exceptions->report(function (ApiException $e, LoggerInterface $logger): bool {
+        $exceptions->report(function (ApiException $e): bool {
             if ($e->status >= 400 && $e->status < 500) {
-                $logger->warning('API Client Error', [
+                $this->logger->warning('API Client Error', [
                     'message' => $e->getMessage(),
                     'status' => $e->status,
                     'errors' => $e->errors
@@ -34,7 +38,7 @@ class HandlerException
                 return false;
             }
             
-            $logger->error('API Server Error', [
+            $this->logger->error('API Server Error', [
                 'message' => $e->getMessage(),
                 'status' => $e->status,
                 'errors' => $e->errors
@@ -43,13 +47,13 @@ class HandlerException
             return true;
         });
 
-        $exceptions->report(function (Throwable $e, LoggerInterface $logger): void {
+        set_exception_handler(function (Throwable $e): void {
 
             if ($e instanceof ApiException) {
                 return;
             }
 
-            $logger->error('Unhandled Exception', [
+            $this->logger->error('Unhandled Exception', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
