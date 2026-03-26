@@ -21,7 +21,7 @@ Route::get('/me', [AuthController::class, 'me'])->middleware('auth')->name('me')
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth')->name('logout');
 
 Route::middleware('guest')->group(function () {
-    Route::get('login', fn() => view('auth.login'))->name('login');
+    Route::view('login', 'auth.login')->name('login');
     Route::post('login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.attempt');
     Route::view('register', 'auth.register')->name('register');
     Route::post('register', [AuthController::class, 'register'])->name('register.store');
