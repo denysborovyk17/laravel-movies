@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\DTO\Admin\MovieDataDto;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{StoreMovieRequest, UpdateMovieRequest};
-use App\Http\Resources\{MovieCollection, MovieResource};
+use App\Http\Resources\{MovieListResource, MovieResource};
 use App\Services\Interfaces\Api\ApiMovieServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
@@ -16,21 +16,21 @@ class MovieController extends Controller
         private readonly ApiMovieServiceInterface $apiMovieService
     ) {}
 
-    public function index(): MovieCollection
+    public function index(): MovieListResource
     {
         $movies = $this->apiMovieService->getAllApi();
 
-        return new MovieCollection($movies);
+        return new MovieListResource($movies);
     }
 
-    public function trashed(): MovieCollection
+    public function trashed(): MovieListResource
     {
         $movies = $this->apiMovieService->getTrashed();
 
-        return new MovieCollection($movies);
+        return new MovieListResource($movies);
     }
 
-    public function show(int $movieId): MovieResource|JsonResponse
+    public function show(int $movieId): MovieResource
     {
         $movie = $this->apiMovieService->getByIdApi($movieId);
 
@@ -46,7 +46,7 @@ class MovieController extends Controller
         return new MovieResource($movie);
     }
 
-    public function update(UpdateMovieRequest $request, int $movieId): MovieResource|JsonResponse
+    public function update(UpdateMovieRequest $request, int $movieId): MovieResource
     {
         $movie = $this->apiMovieService->getByIdApi($movieId);
 
