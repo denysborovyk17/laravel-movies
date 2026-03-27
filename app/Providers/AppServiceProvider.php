@@ -7,9 +7,9 @@ use App\Repositories\{AuthRepository, DirectorRepository, MovieRepository};
 use App\Repositories\Interfaces\Api\{ApiAuthRepositoryInterface, ApiDirectorRepositoryInterface, ApiMovieRepositoryInterface};
 use App\Repositories\Interfaces\{AuthRepositoryInterface, DirectorRepositoryInterface, MovieRepositoryInterface};
 use App\Services\Api\{ApiAuthService, ApiMovieService};
-use App\Services\{AuthService, MovieService};
+use App\Services\{MovieService};
 use App\Services\Interfaces\Api\{ApiAuthServiceInterface, ApiMovieServiceInterface};
-use App\Services\Interfaces\{AuthServiceInterface, MovieServiceInterface};
+use App\Services\Interfaces\{MovieServiceInterface};
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -27,7 +27,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ApiAuthServiceInterface::class, ApiAuthService::class);
         
         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
-        $this->app->bind(AuthServiceInterface::class, AuthService::class);
 
         $this->app->bind(ApiDirectorRepositoryInterface::class, ApiDirectorRepository::class);
         $this->app->bind(DirectorRepositoryInterface::class, DirectorRepository::class);
