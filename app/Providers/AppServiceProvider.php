@@ -3,13 +3,13 @@
 namespace App\Providers;
 
 use App\Repositories\Api\{ApiAuthRepository, ApiDirectorRepository, ApiMovieRepository};
-use App\Repositories\{AuthRepository, DirectorRepository, MovieRepository};
+use App\Repositories\{AuthRepository, DirectorRepository, MovieRepository, UserRepository};
 use App\Repositories\Interfaces\Api\{ApiAuthRepositoryInterface, ApiDirectorRepositoryInterface, ApiMovieRepositoryInterface};
-use App\Repositories\Interfaces\{AuthRepositoryInterface, DirectorRepositoryInterface, MovieRepositoryInterface};
+use App\Repositories\Interfaces\{AuthRepositoryInterface, DirectorRepositoryInterface, MovieRepositoryInterface, UserRepositoryInterface};
 use App\Services\Api\{ApiAuthService, ApiMovieService};
-use App\Services\{MovieService};
+use App\Services\{MailService, MovieService};
 use App\Services\Interfaces\Api\{ApiAuthServiceInterface, ApiMovieServiceInterface};
-use App\Services\Interfaces\{MovieServiceInterface};
+use App\Services\Interfaces\{MailServiceInterface, MovieServiceInterface};
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
@@ -30,6 +30,9 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(ApiDirectorRepositoryInterface::class, ApiDirectorRepository::class);
         $this->app->bind(DirectorRepositoryInterface::class, DirectorRepository::class);
+
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
+        $this->app->bind(MailServiceInterface::class, MailService::class);
     }
 
     public function boot(): void
