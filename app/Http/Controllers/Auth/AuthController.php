@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{RegisterRequest, LoginRequest};
 use App\Mail\WelcomeMail;
@@ -25,7 +26,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        Mail::to($user->email)->send(new WelcomeMail($user));
+        UserRegistered::dispatch($user);
 
         return redirect()->intended(route('movies.index'))
             ->with('success', 'Реєстрація успішна! Ласкаво просимо!');
