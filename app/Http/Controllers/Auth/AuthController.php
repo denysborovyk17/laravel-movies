@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{RegisterRequest, LoginRequest};
+use App\Mail\WelcomeMail;
 use App\Repositories\Interfaces\AuthRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
@@ -22,6 +24,8 @@ class AuthController extends Controller
         $user = $this->authRepository->register($request->toDTO());
 
         Auth::login($user);
+
+        Mail::to($user->email)->send(new WelcomeMail($user));
 
         return redirect()->intended(route('movies.index'))
             ->with('success', 'Реєстрація успішна! Ласкаво просимо!');
