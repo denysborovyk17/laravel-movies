@@ -26,7 +26,7 @@ class AuthController extends Controller
 
         Auth::login($user);
 
-        UserRegistered::dispatch($user);
+        UserRegistered::dispatch($user->id);
 
         return redirect()->intended(route('movies.index'))
             ->with('success', 'Реєстрація успішна! Ласкаво просимо!');
