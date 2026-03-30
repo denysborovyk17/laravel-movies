@@ -30,7 +30,7 @@ class UpdateMovieRequest extends FormRequest
             'description' => 'required|string|max:1000',
             'year' => 'required|integer|min:1900|max:2050',
             'genre' => 'required|string|max:255',
-            'rating' => 'required|integer|min:0|max:10',
+            'rating' => 'required|numeric|min:0|max:10',
             'status' => ['required', new Enum(MovieStatus::class)],
             'image' => 'image|mimes:jpeg,png,jpg,webp|max:2048',
             'remove_image' => 'sometimes|boolean',
