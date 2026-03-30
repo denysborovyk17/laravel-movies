@@ -2,16 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\DTO\Auth\RegisterDto;
 use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\{RegisterRequest, LoginRequest};
-use App\Mail\WelcomeMail;
+use App\Http\Requests\{Api\Auth\ApiRegisterRequest, LoginRequest};
 use App\Repositories\Interfaces\AuthRepositoryInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
 
 class AuthController extends Controller
@@ -20,9 +19,9 @@ class AuthController extends Controller
         private readonly AuthRepositoryInterface $authRepository
     ) {}
 
-    public function register(RegisterRequest $request): RedirectResponse
+    public function register(ApiRegisterRequest $request): RedirectResponse
     {
-        $user = $this->authRepository->register($request->toDTO());
+        $user = $this->authRepository->register(RegisterDto::fromRequest($request));
 
         Auth::login($user);
 
