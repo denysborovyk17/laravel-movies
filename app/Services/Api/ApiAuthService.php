@@ -3,6 +3,7 @@
 namespace App\Services\Api;
 
 use App\DTO\Auth\{AuthDto, LoginDto, RegisterDto, UserDataDto};
+use App\Models\User;
 use App\Repositories\Interfaces\Api\ApiAuthRepositoryInterface;
 use App\Services\Interfaces\Api\ApiAuthServiceInterface;
 use Exception;
@@ -14,25 +15,19 @@ class ApiAuthService implements ApiAuthServiceInterface
         private readonly ApiAuthRepositoryInterface $apiAuthRepository
     ) {}
 
-    public function register(RegisterDto $userDTO): AuthDto
+    public function register(RegisterDto $userDTO): array
     {
         $user = $this->apiAuthRepository->register($userDTO);
 
         $token = $user->createToken('api_token')->plainTextToken;
 
-        $userViewDTO = new UserDataDto(
-            id: $user->id,
-            name: $user->name,
-            email: $user->email
-        );
-
-        return new AuthDto(
-            user: $userViewDTO,
-            token: $token
-        );
+        return [
+            'user' => $user,
+            'token' => $token
+        ];
     }
 
-    public function login(LoginDto $userDTO): AuthDto
+    public function login(LoginDto $userDTO): array
     {
         $user = $this->apiAuthRepository->login($userDTO);
 
@@ -42,27 +37,10 @@ class ApiAuthService implements ApiAuthServiceInterface
 
         $token = $user->createToken('api_token')->plainTextToken;
 
-        $userViewDTO = new UserDataDto(
-            id: $user->id,
-            name: $user->name,
-            email: $user->email
-        );
-
-        return new AuthDto(
-            user: $userViewDTO,
-            token: $token
-        );
-    }
-
-    public function me(int $userId): UserDataDto
-    {
-        $user = $this->apiAuthRepository->me($userId);
-    
-        return new UserDataDto(
-            id: $user->id,
-            name: $user->name,
-            email: $user->email
-        );
+        return [
+            'user' => $user,
+            'token' => $token
+        ];
     }
 
     public function logout(int $userId): void
