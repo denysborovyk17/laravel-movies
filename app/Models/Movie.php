@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\MovieStatus;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -67,12 +69,9 @@ class Movie extends Model
         return $this->image ? asset('storage/' . $this->image) : null;
     }
 
-    public function scopePublished($query)
+    #[Scope]
+    protected function published(Builder $query): void
     {
-        if (auth()->check() && auth()->user()->isAdmin()) {
-            return $query;
-        }
-
-        return $query->where('status', MovieStatus::PUBLISHED);
+        $query->where('status', MovieStatus::PUBLISHED->value);
     }
 }
