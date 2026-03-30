@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\DTO\Auth\RegisterDto;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
@@ -42,10 +41,5 @@ class RegisterRequest extends FormRequest
             'password.string' => 'Пароль має бути рядком',
             'password.min' => 'Мінімальна довжина пароля 8 символів',
         ];
-    }
-
-    public function toDTO(): RegisterDto
-    {
-        return RegisterDto::fromArray($this->validated());
     }
 }
