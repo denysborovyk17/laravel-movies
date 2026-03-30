@@ -7,9 +7,9 @@ use App\Enums\MovieStatus;
 class MovieSearchFilterDto
 {
     public function __construct(
-        private ?string $search = null,
-        private ?MovieStatus $status = null,
-        private int $perPage
+        private readonly ?string $search = null,
+        private readonly ?MovieStatus $status = null,
+        private readonly int $perPage
     ) {}
     
     public function getSearch(): string|null
@@ -29,19 +29,11 @@ class MovieSearchFilterDto
 
     public function hasSearch(): bool
     {
-        if (empty($this->search)) {
-            return false;
-        }
-
-        return true;
+        return !empty($this->search);
     }
 
     public function hasStatus(): bool
     {
-        if (!$this->status) {
-            return false;
-        }
-
-        return true;
+        return $this->status !== null;
     }
 }
