@@ -2,6 +2,8 @@
 
 namespace App\DTO\Auth;
 
+use App\Http\Requests\Api\Auth\ApiRegisterRequest;
+
 class RegisterDto
 {
     public function __construct(
@@ -10,12 +12,12 @@ class RegisterDto
         private readonly string $password
     ) {}
 
-    public static function fromArray(array $data): self
+    public static function fromRequest(ApiRegisterRequest $request): self
     {
         return new self(
-            name: $data['name'],
-            email: $data['email'],
-            password: $data['password']
+            name: $request->validated('name'),
+            email: $request->validated('email'),
+            password: $request->validated('password')
         );
     }
 

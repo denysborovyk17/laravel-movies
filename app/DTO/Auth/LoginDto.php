@@ -2,6 +2,8 @@
 
 namespace App\DTO\Auth;
 
+use App\Http\Requests\Api\Auth\ApiLoginRequest;
+
 class LoginDto
 {
     public function __construct(
@@ -9,11 +11,11 @@ class LoginDto
         private readonly string $password
     ) {}
 
-    public static function fromArray(array $data): self
+    public static function fromRequest(ApiLoginRequest $request): self
     {
         return new self(
-            email: $data['email'],
-            password: $data['password']
+            email: $request->validated('email'),
+            password: $request->validated('password')
         );
     }
 
