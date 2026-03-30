@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\DTO\Auth\LoginDto;
+use App\DTO\Auth\RegisterDto;
+use App\Http\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\{ApiRegisterRequest, ApiLoginRequest};
-use App\Http\Resources\{AuthResource, UserDataResource};
+use App\Http\Resources\{AuthResource, UserDataResource, UserResource};
 use App\Services\Interfaces\Api\ApiAuthServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,25 +18,37 @@ class AuthController extends Controller
         private readonly ApiAuthServiceInterface $apiAuthService
     ) {}
 
-    public function register(ApiRegisterRequest $request): AuthResource
+    public function register(ApiRegisterRequest $request): JsonResponse
     {
-        $authDTO = $this->apiAuthService->register($request->toDTO());
+        $result = $this->apiAuthService->register(RegisterDto::fromRequest($request));
 
-        return new AuthResource($authDTO);
+        $user = $result['user'];
+        $token = $result['token'];
+
+        return ApiResponse::success([
+            'user' => new UserResource($user),
+            'token' => $token
+        ]);
     }
 
-    public function login(ApiLoginRequest $request): AuthResource
+    public function login(ApiLoginRequest $request): JsonResponse
     {
-        $authDTO = $this->apiAuthService->login($request->toDTO());
+        $result = $this->apiAuthService->login(LoginDto::fromRequest($request));
 
-        return new AuthResource($authDTO);
+        $user = $result['user'];
+        $token = $result['token'];
+
+        return ApiResponse::success([
+            'user' => new UserResource($user),
+            'token' => $token
+        ]);
     }
 
-    public function me(Request $request): UserDataResource
+    public function me(Request $request): JsonResponse
     {
-        $userData = $this->apiAuthService->me($request->user()->id);
-    
-        return new UserDataResource($userData);
+        return response()->json([
+            'user' => new UserResource($request->user())
+        ]);
     }
 
     public function logout(Request $request): JsonResponse
