@@ -12,13 +12,13 @@ class MovieDataDto
     public function __construct(
         private readonly string $title,
         private readonly string $director,
-        private readonly ?UploadedFile $imageFile = null,
-        private readonly bool $removeImage,
         private readonly string $description,
         private readonly int $year,
         private readonly string $genre,
-        private readonly int $rating,
-        private readonly MovieStatus $status
+        private readonly float $rating,
+        private readonly MovieStatus $status,
+        private readonly ?UploadedFile $imageFile = null,
+        private readonly bool $removeImage = false
     ) {}
 
     public static function fromRequest(StoreMovieRequest|UpdateMovieRequest $request): self
@@ -31,7 +31,7 @@ class MovieDataDto
             description: $request->validated('description'),
             year: $request->integer('year'),
             genre: $request->validated('genre'),
-            rating: $request->integer('rating'),
+            rating: $request->float('rating'),
             status: MovieStatus::from($request->validated('status'))
         );
     }
@@ -71,7 +71,7 @@ class MovieDataDto
         return $this->genre;
     }
 
-    public function getRating(): int
+    public function getRating(): float
     {
         return $this->rating;
     }
