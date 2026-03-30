@@ -16,7 +16,7 @@ interface MovieServiceInterface
 
     public function store(MovieDataDto $movieDTO): Movie;
 
-    public function update(MovieDataDto $movieDTO, Movie $movie): bool|null;
+    public function update(MovieDataDto $movieDTO, int $movieId): bool|null;
 
     public function delete(Movie $movie): bool;
 

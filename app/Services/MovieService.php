@@ -30,15 +30,17 @@ class MovieService implements MovieServiceInterface
         return $this->movieRepository->listAdmin($filter);
     }
 
-    public function store(MovieDataDto $movieDTO): Movie
+    public function store(MovieDataDto $dto): Movie
     {
-        $data = $this->buildData($movieDTO, null);
+        $this->buildData($dto, null);
 
-        return $this->movieRepository->store($data);
+        return $this->movieRepository->store($dto);
     }
 
-    public function update(MovieDataDto $movieDTO, Movie $movie): bool|null
-    {    
+    public function update(MovieDataDto $movieDTO, int $movieId): bool|null
+    {
+        $movie = $this->movieRepository->getById($movieId);    
+    
         $data = $this->buildData($movieDTO, $movie);
 
         return $movie->update($data);
