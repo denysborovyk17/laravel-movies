@@ -9,7 +9,7 @@ class MovieSearchDto
         private readonly int $perPage
     ) {}
 
-    public function hasSearch(): bool
+    public function hasSearch(): bool 
     {
         if (empty($this->search)) {
             return false;
@@ -18,7 +18,7 @@ class MovieSearchDto
         return true;
     }
 
-    public function getSearch(): string
+    public function getSearch(): string|null
     {
         return $this->search;
     }
