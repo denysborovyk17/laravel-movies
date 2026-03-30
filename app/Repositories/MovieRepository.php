@@ -2,11 +2,12 @@
 
 namespace App\Repositories;
 
+use App\DTO\Admin\MovieDataDto;
 use App\DTO\Admin\MovieSearchFilterDto;
 use App\DTO\MovieSearchDto;
-use App\Enums\MovieStatus;
 use App\Models\Movie;
 use App\Repositories\Interfaces\MovieRepositoryInterface;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Pagination\LengthAwarePaginator;
 
 class MovieRepository implements MovieRepositoryInterface
@@ -14,14 +15,9 @@ class MovieRepository implements MovieRepositoryInterface
     public function listPublic(MovieSearchDto $search): LengthAwarePaginator
     {
         return Movie::with('director')
-            ->where('status', MovieStatus::PUBLISHED->value)
-            ->when(
-                $search->hasSearch(),
-                fn($q) => $q->where(
-                    fn($q) => $q->where('title', 'like', "%{$search->getSearch()}%")
-                        ->orWhere('description', 'like', "%{$search->getSearch()}%")
-                )
-            )
+            ->published()
+            ->when($search->hasSearch(), 
+                fn($q) => $this->applySearch($q, $search->getSearch()))
             ->latest('year')
             ->paginate($search->getPerPage());
     }
@@ -30,24 +26,27 @@ class MovieRepository implements MovieRepositoryInterface
     {
         return Movie::with('director')
             ->when($filter->hasStatus(), fn($q) => $q->where('status', $filter->getStatus()->value))
-            ->when(
-                $filter->hasSearch(),
-                fn($q) => $q->where(
-                    fn($q) => $q->where('title', 'like', "%{$filter->getSearch()}%")
-                        ->orWhere('description', 'like', "%{$filter->getSearch()}%")
-                )
-            )
+            ->when($filter->hasSearch(),
+                fn($q) => $this->applySearch($q, $filter->getSearch()))
             ->latest('year')
             ->paginate($filter->getPerPage());
     }
 
-    public function getById(int $movieId): Movie
+    private function applySearch(Builder $query, string $search): Builder
+    {
+        return $query->where(
+            fn($q) => $q->where('title', 'like', "%{$search}%")
+                ->orWhere('description', 'like', "%{$search}%")
+        );
+    }
+
+    public function getById(int $movieId): Movie|null
     {
         return Movie::find($movieId);
     }
 
-    public function store(array $data): Movie
+    public function store(MovieDataDto $dto): Movie
     {
-        return Movie::create($data);
+        return Movie::create($dto);
     }
 }

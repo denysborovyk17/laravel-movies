@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Interfaces;
 
+use App\DTO\Admin\MovieDataDto;
 use App\DTO\Admin\MovieSearchFilterDto;
 use App\DTO\MovieSearchDto;
 use App\Models\Movie;
@@ -13,7 +14,7 @@ interface MovieRepositoryInterface
 
     public function listAdmin(MovieSearchFilterDto $filter): LengthAwarePaginator;
 
-    public function getById(int $movieId): Movie;
+    public function getById(int $movieId): Movie|null;
 
-    public function store(array $data): Movie;
+    public function store(MovieDataDto $dto): Movie;
 }
