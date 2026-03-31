@@ -53,26 +53,32 @@ class MovieController extends Controller
         return redirect()->route('admin.movies.index')->with('success', 'Movie created successfully');
     }
 
-    public function edit(Movie $movie): View
+    public function edit(int $movieId): View
     {
+        $movie = $this->movieService->getById($movieId);
+    
         $this->authorize('update', $movie);
 
         return view('admin.movies.edit', compact('movie'));
     }
 
-    public function update(UpdateMovieRequest $request, Movie $movie): RedirectResponse
+    public function update(UpdateMovieRequest $request, int $movieId): RedirectResponse
     {
+        $movie = $this->movieService->getById($movieId);
+    
         $this->authorize('update', $movie);
 
         $movieDTO = MovieDataDto::fromRequest($request);
 
-        $this->movieService->update($movieDTO, $movie);
+        $this->movieService->update($movieDTO, $movieId);
 
         return redirect()->route('admin.movies.index')->with('success', 'Movie updated successfully');
     }
 
-    public function destroy(Movie $movie): RedirectResponse
+    public function destroy(int $movieId): RedirectResponse
     {
+        $movie = $this->movieService->getById($movieId);
+    
         $this->authorize('delete', $movie);
 
         $this->movieService->delete($movie);
