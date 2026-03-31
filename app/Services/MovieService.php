@@ -5,6 +5,7 @@ namespace App\Services;
 use App\DTO\Admin\MovieDataDto;
 use App\DTO\Admin\MovieSearchFilterDto;
 use App\DTO\MovieSearchDto;
+use App\Exceptions\MovieNotFoundException;
 use App\Models\{Movie};
 use App\Repositories\Interfaces\DirectorRepositoryInterface;
 use App\Repositories\Interfaces\MovieRepositoryInterface;
@@ -28,6 +29,17 @@ class MovieService implements MovieServiceInterface
     public function listAdmin(MovieSearchFilterDto $filter): LengthAwarePaginator
     {
         return $this->movieRepository->listAdmin($filter);
+    }
+
+    public function getById(int $movieId): Movie
+    {
+        $movie = $this->movieRepository->getById($movieId);
+
+        if (!$movie) {
+            throw new MovieNotFoundException($movieId);
+        }
+
+        return $movie;
     }
 
     public function store(MovieDataDto $dto): Movie

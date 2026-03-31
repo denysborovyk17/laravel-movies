@@ -14,6 +14,8 @@ interface MovieServiceInterface
 
     public function listAdmin(AdminMovieSearchFilterDto $filter): LengthAwarePaginator;
 
+    public function getById(int $movieId): Movie;
+
     public function store(MovieDataDto $movieDTO): Movie;
 
     public function update(MovieDataDto $movieDTO, int $movieId): bool|null;
