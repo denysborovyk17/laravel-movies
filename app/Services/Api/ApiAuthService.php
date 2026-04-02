@@ -27,6 +27,9 @@ class ApiAuthService implements ApiAuthServiceInterface
         ];
     }
 
+    /**
+     * @throws Exception
+     */
     public function login(LoginDto $userDTO): array
     {
         $user = $this->apiAuthRepository->login($userDTO);
