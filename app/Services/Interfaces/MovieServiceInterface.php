@@ -20,11 +20,9 @@ interface MovieServiceInterface
 
     public function update(MovieDataDto $movieDTO, int $movieId): bool|null;
 
-    public function delete(Movie $movie): bool;
+    public function delete(int $movieId): bool;
 
     public function buildData(MovieDataDto $movieDTO, ?Movie $movie): array;
-
-    public function generateSlug(string $title, ?Movie $movie);
 
     public function handleImage(MovieDataDto $movieDTO, ?Movie $movie);
 }
