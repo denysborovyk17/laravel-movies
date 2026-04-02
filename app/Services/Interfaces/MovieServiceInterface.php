@@ -23,6 +23,4 @@ interface MovieServiceInterface
     public function delete(int $movieId): bool;
 
     public function buildData(MovieDataDto $movieDTO, ?Movie $movie): array;
-
-    public function handleImage(MovieDataDto $movieDTO, ?Movie $movie);
 }
