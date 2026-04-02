@@ -16,5 +16,5 @@ interface MovieRepositoryInterface
 
     public function getById(int $movieId): Movie|null;
 
-    public function store(MovieDataDto $dto): Movie;
+    public function store(array $data): Movie;
 }

@@ -16,7 +16,7 @@ class MovieRepository implements MovieRepositoryInterface
     {
         return Movie::with('director')
             ->published()
-            ->when($search->hasSearch(), 
+            ->when($search->hasSearch(),
                 fn($q) => $this->applySearch($q, $search->getSearch()))
             ->latest('year')
             ->paginate($search->getPerPage());
@@ -45,8 +45,8 @@ class MovieRepository implements MovieRepositoryInterface
         return Movie::find($movieId);
     }
 
-    public function store(MovieDataDto $dto): Movie
+    public function store(array $data): Movie
     {
-        return Movie::create($dto);
+        return Movie::create($data);
     }
 }
