@@ -1,4 +1,4 @@
-<?php declare(strict_types=1);
+<?php
 
 namespace {{ namespace }};
 
@@ -25,7 +25,7 @@ class {{ class }}
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return array<int, \Illuminate\Broadcasting\Channel>
+     * @return array<int, Channel>
      */
     public function broadcastOn(): array
     {
