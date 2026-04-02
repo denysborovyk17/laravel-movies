@@ -25,6 +25,4 @@ interface ApiMovieServiceInterface
     public function forceDeleteApi(int $movieId): bool;
 
     public function buildDataApi(MovieDataDto $movieDTO, ?Movie $movie): array;
-
-    public function generateSlug(string $title, ?Movie $movie);
 }

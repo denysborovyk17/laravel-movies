@@ -4,6 +4,7 @@ namespace App\Services\Api;
 
 use App\DTO\Admin\MovieDataDto;
 use App\Exceptions\MovieNotFoundException;
+use App\Services\SlugService;
 use App\Models\{Movie, Director};
 use App\Repositories\Interfaces\Api\ApiDirectorRepositoryInterface;
 use App\Repositories\Interfaces\Api\ApiMovieRepositoryInterface;
@@ -16,7 +17,8 @@ class ApiMovieService implements ApiMovieServiceInterface
 {
     public function __construct(
         private readonly ApiMovieRepositoryInterface $apiMovieRepository,
-        private readonly ApiDirectorRepositoryInterface $apiDirectorRepository
+        private readonly ApiDirectorRepositoryInterface $apiDirectorRepository,
+        private readonly SlugService $slugService,
     ) {}
 
     public function getAllApi(): Collection
@@ -64,12 +66,12 @@ class ApiMovieService implements ApiMovieServiceInterface
         if (!$movie) {
             throw new MovieNotFoundException($movieId);
         }
-        
+
         $data = $this->buildDataApi($movieDTO, $movie);
 
         Cache::forget('movies_all');
         Cache::forget("movies_{$movieId}");
-        
+
         $movie->update($data);
 
         return $movie;
@@ -117,35 +119,17 @@ class ApiMovieService implements ApiMovieServiceInterface
     public function buildDataApi(MovieDataDto $movieDTO, ?Movie $movie): array
     {
         $director = $this->apiDirectorRepository->findOrCreate($movieDTO->getDirector());
-    
+        $slug = $this->slugService->generateUnique($movieDTO->getTitle(), Movie::class, $movie?->id);
+
         return [
             'title' => $movieDTO->getTitle(),
             'director_id' => $director->id,
-            'slug' => $this->generateSlug($movieDTO->getTitle(), $movie),
+            'slug' => $slug,
             'description' => $movieDTO->getDescription(),
             'year' => $movieDTO->getYear(),
             'genre' => $movieDTO->getGenre(),
             'rating' => $movieDTO->getRating(),
             'status' => $movieDTO->getStatus(),
         ];
-    }
-
-    public function generateSlug(string $title, ?Movie $movie): string
-    {
-        if (!$movie || $title !== $movie->title) {
-            $slug = trim(Str::slug($title));
-            $original = $slug;
-            $counter = 1;
-
-            while (Movie::where('slug', $slug)
-                ->when($movie, fn($q) => $q->where('id', '!=', $movie->id))
-                ->exists()
-            ) {
-                $slug = $original . '-' . $counter++;
-            }
-            
-            return $slug;
-        }
-        return $movie?->slug;
     }
 }
