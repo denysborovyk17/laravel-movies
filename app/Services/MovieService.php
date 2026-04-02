@@ -11,14 +11,14 @@ use App\Repositories\Interfaces\DirectorRepositoryInterface;
 use App\Repositories\Interfaces\MovieRepositoryInterface;
 use App\Services\Interfaces\MovieServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 
 class MovieService implements MovieServiceInterface
 {
     public function __construct(
         private readonly MovieRepositoryInterface $movieRepository,
-        private readonly DirectorRepositoryInterface $directorRepository
+        private readonly DirectorRepositoryInterface $directorRepository,
+        private readonly SlugService $slugService,
+        private readonly FileService $fileService,
     ) {}
 
     public function listPublic(MovieSearchDto $search): LengthAwarePaginator
@@ -42,27 +42,25 @@ class MovieService implements MovieServiceInterface
         return $movie;
     }
 
-    public function store(MovieDataDto $dto): Movie
+    public function store(MovieDataDto $movieDTO): Movie
     {
-        $this->buildData($dto, null);
+        $data = $this->buildData($movieDTO, null);
 
-        return $this->movieRepository->store($dto);
+        return $this->movieRepository->store($data);
     }
 
     public function update(MovieDataDto $movieDTO, int $movieId): bool|null
     {
-        $movie = $this->movieRepository->getById($movieId);    
-    
+        $movie = $this->movieRepository->getById($movieId);
+
         $data = $this->buildData($movieDTO, $movie);
 
         return $movie->update($data);
     }
 
-    public function delete(Movie $movie): bool
+    public function delete(int $movieId): bool
     {
-        if ($movie->image) {
-            Storage::disk('public')->delete($movie->image);
-        }
+        $movie = $this->movieRepository->getById($movieId);
 
         return $movie->delete();
     }
@@ -70,7 +68,23 @@ class MovieService implements MovieServiceInterface
     public function buildData(MovieDataDto $movieDTO, ?Movie $movie): array
     {
         $director = $this->directorRepository->findOrCreate($movieDTO->getDirector());
-    
+        $slug = $this->slugService->generateUnique($movieDTO->getTitle(), Movie::class, $movie?->id);
+
+        $imagePath = $movieDTO->getImageFile();
+        if ($imagePath) {
+            $this->fileService->delete($movie?->image);
+        } elseif ($movieDTO->getRemoveImage()) {
+            $this->fileService->delete($movie?->image);
+        } else {
+            $movie?->image;
+        }
+
+        if ($imagePath) {
+            $this->fileService->upload($movieDTO->getImageFile() ,'admin');
+        } else {
+            $movie?->image;
+        }
+
         return [
             'title' => $movieDTO->getTitle(),
             'director_id' => $director->id,
@@ -79,46 +93,8 @@ class MovieService implements MovieServiceInterface
             'genre' => $movieDTO->getGenre(),
             'rating' => $movieDTO->getRating(),
             'status' => $movieDTO->getStatus(),
-
-            'slug' => $this->generateSlug($movieDTO->getTitle(), $movie),
-            'image' => $this->handleImage($movieDTO, $movie)
+            'slug' => $slug,
+            'image' => $imagePath,
         ];
-    }
-
-    public function generateSlug(string $title, ?Movie $movie)
-    {
-        if (!$movie || $title !== $movie->title) {
-            $slug = trim(Str::slug($title));
-            $original = $slug;
-            $counter = 1;
-
-            while (Movie::where('slug', $slug)
-                ->when($movie, fn($q) => $q->where('id', '!=', $movie->id))
-                ->exists()    
-            ) {
-                $slug = $original . '-' . $counter++;
-            }
-
-            return $slug;   
-        }
-        return $movie?->slug;
-    }
-
-    public function handleImage(MovieDataDto $movieDTO, ?Movie $movie)
-    {
-        if (!empty($movieDTO->getImageFile())) {
-            if ($movie?->image) {
-                Storage::disk('public')->delete($movie->image);
-            }
-
-            return $movieDTO->getImageFile()->store('admin', 'public');
-        }
-        
-        if (!empty($movieDTO->getRemoveImage()) && $movie?->image) {
-            Storage::disk('public')->delete($movie->image);
-            return null;
-        }
-
-        return $movie?->image;
     }
 }
