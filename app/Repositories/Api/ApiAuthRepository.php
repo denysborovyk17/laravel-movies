@@ -33,9 +33,9 @@ class ApiAuthRepository implements ApiAuthRepositoryInterface
     public function logout(int $userId): void
     {
         $user = User::find($userId);
-        
+
         if ($user) {
-            $user->tokens()->delete();   
+            $user->tokens()->delete();
         }
     }
 }
