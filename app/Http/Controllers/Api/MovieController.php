@@ -39,7 +39,7 @@ class MovieController extends Controller
 
     public function store(StoreMovieRequest $request): MovieResource
     {
-        $movieDTO = MovieDataDto::fromRequest($request);
+        $movieDTO = $request->toDTO();
 
         $movie = $this->apiMovieService->createApi($movieDTO);
 
@@ -52,7 +52,7 @@ class MovieController extends Controller
 
         Gate::authorize('update', $movie);
 
-        $movieDTO = MovieDataDto::fromRequest($request);
+        $movieDTO = $request->toDTO();
 
         $updatedMovie = $this->apiMovieService->updateApi($movieDTO, $movieId);
 
@@ -75,7 +75,7 @@ class MovieController extends Controller
         $movie = $this->apiMovieService->getByIdApi($movieId);
 
         Gate::authorize('restore', $movie);
-    
+
         $this->apiMovieService->restoreApi($movieId);
 
         return response()->json(['success' => true]);

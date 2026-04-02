@@ -21,7 +21,7 @@ class AuthController extends Controller
 
     public function register(ApiRegisterRequest $request): RedirectResponse
     {
-        $user = $this->authRepository->register(RegisterDto::fromRequest($request));
+        $user = $this->authRepository->register($request->toDTO());
 
         Auth::login($user);
 

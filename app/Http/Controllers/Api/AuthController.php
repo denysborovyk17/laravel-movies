@@ -20,7 +20,7 @@ class AuthController extends Controller
 
     public function register(ApiRegisterRequest $request): JsonResponse
     {
-        $result = $this->apiAuthService->register(RegisterDto::fromRequest($request));
+        $result = $this->apiAuthService->register($request->toDTO());
 
         $user = $result['user'];
         $token = $result['token'];
@@ -33,7 +33,7 @@ class AuthController extends Controller
 
     public function login(ApiLoginRequest $request): JsonResponse
     {
-        $result = $this->apiAuthService->login(LoginDto::fromRequest($request));
+        $result = $this->apiAuthService->login($request->toDTO());
 
         $user = $result['user'];
         $token = $result['token'];
@@ -54,7 +54,7 @@ class AuthController extends Controller
     public function logout(Request $request): JsonResponse
     {
         $userId = $request->user()->id;
-        
+
         $this->apiAuthService->logout($userId);
 
         return response()->json([
