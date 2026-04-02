@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\DTO\Admin\MovieDataDto;
 use App\Enums\MovieStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
@@ -65,5 +66,15 @@ class UpdateMovieRequest extends FormRequest
             'image.mimes' => 'Допустимі типи зображень: jpeg, png, jpg, webp',
             'image.max' => 'Максимальний розмір файлу 2 МБ',
         ];
+    }
+
+    public function toDTO(): MovieDataDto
+    {
+        $data = $this->validated();
+        $data['status'] = MovieStatus::tryFrom($data['status']);
+        $data['imageFile'] = $this->file('image');
+        $data['removeImage'] = $this->boolean('remove_image');
+
+        return MovieDataDto::fromArray($data);
     }
 }
