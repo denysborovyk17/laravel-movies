@@ -1,0 +1,28 @@
+<?php declare(strict_types=1);
+
+namespace App\Services;
+
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
+
+class FileService
+{
+    public function __construct(
+        //
+    ) {}
+
+    public function upload(UploadedFile $file, string $folder): string|null
+    {
+        if (!$file) {
+            return null;
+        }
+        return $file->store($folder, 'public');
+    }
+
+    public function delete(?string $path): void
+    {
+        if ($path && Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
+    }
+}
