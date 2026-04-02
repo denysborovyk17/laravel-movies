@@ -11,11 +11,11 @@ class LoginDto
         private readonly string $password
     ) {}
 
-    public static function fromRequest(ApiLoginRequest $request): self
+    public static function fromArray(array $data): self
     {
         return new self(
-            email: $request->validated('email'),
-            password: $request->validated('password')
+            email: (string) $data['email'],
+            password: (string) $data['password']
         );
     }
 

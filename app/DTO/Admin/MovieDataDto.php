@@ -21,18 +21,18 @@ class MovieDataDto
         private readonly bool $removeImage = false
     ) {}
 
-    public static function fromRequest(StoreMovieRequest|UpdateMovieRequest $request): self
+    public static function fromArray(array $data): self
     {
         return new self(
-            title: $request->validated('title'),
-            director: $request->validated('director'),
-            imageFile: $request->file('image'),
-            removeImage: $request->boolean('remove_image'),
-            description: $request->validated('description'),
-            year: $request->integer('year'),
-            genre: $request->validated('genre'),
-            rating: $request->float('rating'),
-            status: MovieStatus::from($request->validated('status'))
+            title: (string) $data['title'],
+            director: (string) $data['director'],
+            description: (string) $data['description'],
+            year: (int) $data['year'],
+            genre: (string) $data['genre'],
+            rating: (float) $data['rating'],
+            status: $data['status'],
+            imageFile: $data['imageFile'],
+            removeImage: (bool) $data['removeImage']
         );
     }
 

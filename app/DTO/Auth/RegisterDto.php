@@ -12,12 +12,12 @@ class RegisterDto
         private readonly string $password
     ) {}
 
-    public static function fromRequest(ApiRegisterRequest $request): self
+    public static function fromArray(array $data): self
     {
         return new self(
-            name: $request->validated('name'),
-            email: $request->validated('email'),
-            password: $request->validated('password')
+            name: $data['name'],
+            email: $data['email'],
+            password: $data['password']
         );
     }
 
