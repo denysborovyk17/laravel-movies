@@ -18,7 +18,7 @@ class ApiAuthRepository implements ApiAuthRepositoryInterface
         ]);
     }
 
-    public function login(LoginDto $userDTO): User
+    public function login(LoginDto $userDTO): User|null
     {
         return User::query()
             ->where('email', $userDTO->getEmail())

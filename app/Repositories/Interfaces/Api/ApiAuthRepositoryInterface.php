@@ -9,7 +9,7 @@ interface ApiAuthRepositoryInterface
 {
     public function register(RegisterDto $userDTO): User;
 
-    public function login(LoginDto $userDTO): User;
+    public function login(LoginDto $userDTO): User|null;
 
     public function me(int $userId): User;
 
