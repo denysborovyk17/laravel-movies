@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api\Auth;
 
+use App\DTO\Auth\RegisterDto;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ApiRegisterRequest extends FormRequest
@@ -26,5 +27,10 @@ class ApiRegisterRequest extends FormRequest
             'email' => 'bail|required|email|unique:users,email',
             'password' => 'required|string|min:8',
         ];
+    }
+
+    public function toDTO(): RegisterDto
+    {
+        return RegisterDto::fromArray($this->validated());
     }
 }
