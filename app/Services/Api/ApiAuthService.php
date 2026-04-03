@@ -2,6 +2,7 @@
 
 namespace App\Services\Api;
 
+use App\Exceptions\InvalidCredentialsException;
 use App\DTO\Auth\{AuthDto, LoginDto, RegisterDto, UserDataDto};
 use App\Models\User;
 use App\Repositories\Interfaces\Api\ApiAuthRepositoryInterface;
@@ -35,7 +36,7 @@ class ApiAuthService implements ApiAuthServiceInterface
         $user = $this->apiAuthRepository->login($userDTO);
 
         if (!$user || !Hash::check($userDTO->getPassword(), $user->password)) {
-            throw new Exception('Invalid email or password');
+            throw new InvalidCredentialsException('Invalid email or password');
         }
 
         $token = $user->createToken('api_token')->plainTextToken;
