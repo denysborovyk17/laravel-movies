@@ -37,7 +37,7 @@ class HandlerException
                 ]);
                 return false;
             }
-            
+
             $this->logger->error('API Server Error', [
                 'message' => $e->getMessage(),
                 'status' => $e->status,
@@ -72,7 +72,7 @@ class HandlerException
                 'message' => $e->getMessage()
             ], HttpStatus::NOT_FOUND->value);
         });
-    
+
         $exceptions->render(function (ThrottleRequestsException $e): JsonResponse {
             return response()->json([
                 'success' => false,
@@ -93,6 +93,13 @@ class HandlerException
                 'success' => false,
                 'message' => 'Resource not found',
             ], HttpStatus::NOT_FOUND->value);
+        });
+
+        $exceptions->render(function (InvalidCredentialsException $e): JsonResponse {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage(),
+            ], HttpStatus::UNAUTHORIZED->value);
         });
 
         $exceptions->render(function (AuthorizationException $e): JsonResponse {
