@@ -7,11 +7,11 @@ use App\Enums\MovieStatus;
 class MovieSearchFilterDto
 {
     public function __construct(
-        private readonly ?string $search = null,
-        private readonly ?MovieStatus $status = null,
+        private readonly ?string $search,
+        private readonly ?MovieStatus $status,
         private readonly int $perPage
     ) {}
-    
+
     public function getSearch(): string|null
     {
         return $this->search;
