@@ -11,12 +11,9 @@ class FileService
         //
     ) {}
 
-    public function upload(UploadedFile $file, string $folder): string|null
+    public function upload(?UploadedFile $file, string $folder): string|null
     {
-        if (!$file) {
-            return null;
-        }
-        return $file->store($folder, 'public');
+        return $file?->store($folder, 'public');
     }
 
     public function delete(?string $path): void
