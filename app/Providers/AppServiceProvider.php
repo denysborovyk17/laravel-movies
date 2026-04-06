@@ -7,6 +7,7 @@ use App\Repositories\{AuthRepository, DirectorRepository, MovieRepository, UserR
 use App\Repositories\Interfaces\Api\{ApiAuthRepositoryInterface, ApiDirectorRepositoryInterface, ApiMovieRepositoryInterface};
 use App\Repositories\Interfaces\{AuthRepositoryInterface, DirectorRepositoryInterface, MovieRepositoryInterface, UserRepositoryInterface};
 use App\Services\Api\{ApiAuthService, ApiMovieService};
+use Laravel\Passport\Passport;
 use App\Services\{MailService, MovieService};
 use App\Services\Interfaces\Api\{ApiAuthServiceInterface, ApiMovieServiceInterface};
 use App\Services\Interfaces\{MailServiceInterface, MovieServiceInterface};
@@ -25,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->bind(ApiAuthRepositoryInterface::class, ApiAuthRepository::class);
         $this->app->bind(ApiAuthServiceInterface::class, ApiAuthService::class);
-        
+
         $this->app->bind(AuthRepositoryInterface::class, AuthRepository::class);
 
         $this->app->bind(ApiDirectorRepositoryInterface::class, ApiDirectorRepository::class);
@@ -38,5 +39,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Paginator::useBootstrap();
+
+        Passport::enablePasswordGrant();
+        Passport::tokensExpireIn(now()->addDays(15));
+        Passport::refreshTokensExpireIn(now()->addDays(30));
     }
 }

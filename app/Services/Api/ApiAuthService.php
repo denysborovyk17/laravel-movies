@@ -3,8 +3,7 @@
 namespace App\Services\Api;
 
 use App\Exceptions\InvalidCredentialsException;
-use App\DTO\Auth\{AuthDto, LoginDto, RegisterDto, UserDataDto};
-use App\Models\User;
+use App\DTO\Auth\{LoginDto, RegisterDto};
 use App\Repositories\Interfaces\Api\ApiAuthRepositoryInterface;
 use App\Services\Interfaces\Api\ApiAuthServiceInterface;
 use Exception;
@@ -20,7 +19,7 @@ class ApiAuthService implements ApiAuthServiceInterface
     {
         $user = $this->apiAuthRepository->register($userDTO);
 
-        $token = $user->createToken('api_token')->plainTextToken;
+        $token = $user->createToken('api_token')->accessToken;
 
         return [
             'user' => $user,
@@ -39,7 +38,7 @@ class ApiAuthService implements ApiAuthServiceInterface
             throw new InvalidCredentialsException('Invalid email or password');
         }
 
-        $token = $user->createToken('api_token')->plainTextToken;
+        $token = $user->createToken('api_token')->accessToken;
 
         return [
             'user' => $user,
