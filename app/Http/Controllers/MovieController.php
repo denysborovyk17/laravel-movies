@@ -17,10 +17,10 @@ class MovieController extends Controller
     public function index(Request $request): View
     {
         $search = new MovieSearchDto(
-            search: $request->input('search'),
-            perPage: config('custom.pagination.public_per_page')
+            perPage: config('custom.pagination.public_per_page'),
+            search: $request->input('search')
         );
-    
+
         $movies = $this->movieService->listPublic($search);
 
         return view('movies.index', compact('movies'));

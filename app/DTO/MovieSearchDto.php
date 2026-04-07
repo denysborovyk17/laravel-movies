@@ -5,8 +5,8 @@ namespace App\DTO;
 class MovieSearchDto
 {
     public function __construct(
-        private readonly ?string $search = null,
-        private readonly int $perPage
+        private readonly int $perPage,
+        private readonly ?string $search = null
     ) {}
 
     public function hasSearch(): bool
