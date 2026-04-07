@@ -9,8 +9,6 @@ class DirectorRepository implements DirectorRepositoryInterface
 {
     public function findOrCreate(string $name): Director
     {
-        $trimmedName = trim($name);
-    
-        return Director::firstOrCreate(['name' => $trimmedName]);
+        return Director::firstOrCreate(['name' => $name]);
     }
 }
