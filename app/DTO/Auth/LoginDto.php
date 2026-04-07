@@ -1,9 +1,6 @@
 <?php declare(strict_types=1);
 
 namespace App\DTO\Auth;
-
-use App\Http\Requests\Api\Auth\ApiLoginRequest;
-
 class LoginDto
 {
     public function __construct(
