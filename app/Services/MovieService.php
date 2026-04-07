@@ -31,6 +31,9 @@ class MovieService implements MovieServiceInterface
         return $this->movieRepository->listAdmin($filter);
     }
 
+    /**
+     * @throws MovieNotFoundException
+     */
     public function getById(int $movieId): Movie
     {
         $movie = $this->movieRepository->getById($movieId);
