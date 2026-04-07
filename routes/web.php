@@ -3,7 +3,8 @@
 use App\Http\Controllers\Admin\MovieController as AdminMovieController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\MovieController;
-use App\Http\Controllers\UsersController;
+use App\Http\Controllers\UsersExportController;
+use App\Http\Controllers\MoviesExportController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => redirect()->route('movies.index'))->name('index');
@@ -28,4 +29,7 @@ Route::middleware('guest')->group(function () {
     Route::post('register', [AuthController::class, 'register'])->name('register.store');
 });
 
-Route::get('users/export', [UsersController::class, 'export']);
+Route::prefix('export')->as('export.')->group(function () {
+    Route::get('users', [UsersExportController::class, 'export']);
+    Route::get('movies', [MoviesExportController::class, 'export']);
+});
