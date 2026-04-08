@@ -3,8 +3,6 @@
 namespace App\DTO\Admin;
 
 use App\Enums\MovieStatus;
-use App\Http\Requests\StoreMovieRequest;
-use App\Http\Requests\UpdateMovieRequest;
 use Illuminate\Http\UploadedFile;
 
 class MovieDataDto

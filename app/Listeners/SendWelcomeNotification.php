@@ -5,7 +5,6 @@ namespace App\Listeners;
 use App\Events\UserRegistered;
 use App\Services\Interfaces\MailServiceInterface;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
 
 class SendWelcomeNotification implements ShouldQueue
 {

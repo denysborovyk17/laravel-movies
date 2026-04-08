@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Auth;
 
-use App\DTO\Auth\RegisterDto;
 use App\Events\UserRegistered;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{Api\Auth\ApiRegisterRequest, LoginRequest};

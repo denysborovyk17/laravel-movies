@@ -2,8 +2,6 @@
 
 namespace App\DTO\Auth;
 
-use App\Http\Requests\Api\Auth\ApiRegisterRequest;
-
 class RegisterDto
 {
     public function __construct(

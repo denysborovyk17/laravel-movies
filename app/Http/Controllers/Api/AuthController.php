@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\DTO\Auth\LoginDto;
-use App\DTO\Auth\RegisterDto;
 use App\Http\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Auth\{ApiRegisterRequest, ApiLoginRequest};
-use App\Http\Resources\{AuthResource, UserDataResource, UserResource};
+use App\Http\Resources\UserResource;
 use App\Services\Interfaces\Api\ApiAuthServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

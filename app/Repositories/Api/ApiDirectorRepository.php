@@ -4,7 +4,6 @@ namespace App\Repositories\Api;
 
 use App\Models\Director;
 use App\Repositories\Interfaces\Api\ApiDirectorRepositoryInterface;
-use Exception;
 
 class ApiDirectorRepository implements ApiDirectorRepositoryInterface
 {

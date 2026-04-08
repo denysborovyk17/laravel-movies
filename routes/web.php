@@ -2,9 +2,7 @@
 
 use App\Http\Controllers\Admin\MovieController as AdminMovieController;
 use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\MovieController;
-use App\Http\Controllers\UsersExportController;
-use App\Http\Controllers\MoviesExportController;
+use App\Http\Controllers\{MovieController, MoviesExportController, UsersExportController};
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn() => redirect()->route('movies.index'))->name('index');

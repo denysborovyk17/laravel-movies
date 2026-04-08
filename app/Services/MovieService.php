@@ -2,13 +2,11 @@
 
 namespace App\Services;
 
-use App\DTO\Admin\MovieDataDto;
-use App\DTO\Admin\MovieSearchFilterDto;
+use App\DTO\Admin\{MovieDataDto, MovieSearchFilterDto};
 use App\DTO\MovieSearchDto;
 use App\Exceptions\MovieNotFoundException;
 use App\Models\{Movie};
-use App\Repositories\Interfaces\DirectorRepositoryInterface;
-use App\Repositories\Interfaces\MovieRepositoryInterface;
+use App\Repositories\Interfaces\{MovieRepositoryInterface, DirectorRepositoryInterface};
 use App\Services\Interfaces\MovieServiceInterface;
 use Illuminate\Pagination\LengthAwarePaginator;
 

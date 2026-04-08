@@ -2,8 +2,7 @@
 
 namespace App\Services\Interfaces;
 
-use App\DTO\Admin\MovieDataDto;
-use App\DTO\Admin\MovieSearchFilterDto as AdminMovieSearchFilterDto;
+use App\DTO\Admin\{MovieDataDto, MovieSearchFilterDto as AdminMovieSearchFilterDto};
 use App\DTO\MovieSearchDto;
 use App\Models\Movie;
 use Illuminate\Pagination\LengthAwarePaginator;

@@ -4,9 +4,7 @@ namespace App\Exports;
 
 use App\Models\User;
 use Illuminate\Support\Collection;
-use Maatwebsite\Excel\Concerns\FromCollection;
-use Maatwebsite\Excel\Concerns\ShouldAutoSize;
-use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\{FromCollection, ShouldAutoSize, WithHeadings};
 
 class UsersExport implements FromCollection, ShouldAutoSize, WithHeadings
 {

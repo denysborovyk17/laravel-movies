@@ -2,7 +2,6 @@
 
 namespace App\Repositories\Interfaces;
 
-use App\DTO\Admin\MovieDataDto;
 use App\DTO\Admin\MovieSearchFilterDto;
 use App\DTO\MovieSearchDto;
 use App\Models\Movie;

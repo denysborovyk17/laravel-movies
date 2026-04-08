@@ -2,7 +2,6 @@
 
 namespace App\Repositories\Api;
 
-use Laravel\Passport\Passport;
 use Laravel\Passport\Token;
 use App\DTO\Auth\{RegisterDto, LoginDto};
 use App\Models\User;

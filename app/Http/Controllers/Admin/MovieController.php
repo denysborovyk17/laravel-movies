@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\DTO\Admin\MovieDataDto;
 use App\DTO\Admin\MovieSearchFilterDto;
 use App\Enums\MovieStatus;
 use App\Http\Controllers\Controller;

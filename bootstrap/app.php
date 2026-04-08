@@ -1,8 +1,7 @@
 <?php declare(strict_types=1);
 
 use App\Exceptions\HandlerException;
-use App\Http\Middleware\IsAdmin;
-use App\Http\Middleware\RequestIdMiddleware;
+use App\Http\Middleware\{IsAdmin, RequestIdMiddleware};
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;

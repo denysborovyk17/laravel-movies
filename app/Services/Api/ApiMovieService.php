@@ -5,13 +5,11 @@ namespace App\Services\Api;
 use App\DTO\Admin\MovieDataDto;
 use App\Exceptions\MovieNotFoundException;
 use App\Services\SlugService;
-use App\Models\{Movie, Director};
-use App\Repositories\Interfaces\Api\ApiDirectorRepositoryInterface;
-use App\Repositories\Interfaces\Api\ApiMovieRepositoryInterface;
+use App\Models\Movie;
+use App\Repositories\Interfaces\Api\{ApiMovieRepositoryInterface, ApiDirectorRepositoryInterface};
 use App\Services\Interfaces\Api\ApiMovieServiceInterface;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
 
 class ApiMovieService implements ApiMovieServiceInterface
 {
