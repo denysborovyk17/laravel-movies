@@ -4,12 +4,16 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class RequestIdMiddleware
 {
+    public function __construct(
+        private readonly LoggerInterface $logger
+    ) {}
+
     /**
      * Handle an incoming request.
      *
@@ -20,7 +24,7 @@ class RequestIdMiddleware
         $requestId = $request->header('X-Request-Id') ?: (string) Str::uuid();
         $request->attributes->set('request_id', $requestId);
 
-        Log::withContext([
+        $this->logger->withContext([
             'request_id' => $requestId,
             'path' => $request->path(),
             'method' => $request->method(),
