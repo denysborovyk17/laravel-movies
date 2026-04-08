@@ -2,6 +2,8 @@
 
 namespace App\Repositories\Api;
 
+use Laravel\Passport\Passport;
+use Laravel\Passport\Token;
 use App\DTO\Auth\{RegisterDto, LoginDto};
 use App\Models\User;
 use App\Repositories\Interfaces\Api\ApiAuthRepositoryInterface;
@@ -32,10 +34,9 @@ class ApiAuthRepository implements ApiAuthRepositoryInterface
 
     public function logout(int $userId): void
     {
-        $user = User::find($userId);
-
-        if ($user) {
-            $user->tokens()->delete();
-        }
+        User::find($userId)->tokens()->each(function (Token $token) {
+            $token->revoke();
+            $token->refreshToken?->revoke();
+        });
     }
 }
