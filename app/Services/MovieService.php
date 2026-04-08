@@ -73,19 +73,13 @@ class MovieService implements MovieServiceInterface
         $director = $this->directorRepository->findOrCreate($movieDTO->getDirector());
         $slug = $this->slugService->generateUnique($movieDTO->getTitle(), Movie::class, $movie?->id);
 
-        $imagePath = $movieDTO->getImageFile();
-        if ($imagePath) {
+        $uploadedPath = $movie?->image;
+        if ($movieDTO->getImageFile()) {
             $this->fileService->delete($movie?->image);
+            $uploadedPath = $this->fileService->upload($movieDTO->getImageFile(), 'admin');
         } elseif ($movieDTO->getRemoveImage()) {
             $this->fileService->delete($movie?->image);
-        } else {
-            $movie?->image;
-        }
-
-        if ($imagePath) {
-            $this->fileService->upload($movieDTO->getImageFile() ,'admin');
-        } else {
-            $movie?->image;
+            $uploadedPath = null;
         }
 
         return [
@@ -97,7 +91,7 @@ class MovieService implements MovieServiceInterface
             'rating' => $movieDTO->getRating(),
             'status' => $movieDTO->getStatus(),
             'slug' => $slug,
-            'image' => $imagePath,
+            'image' => $uploadedPath,
         ];
     }
 }
