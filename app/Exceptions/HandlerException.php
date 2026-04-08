@@ -3,7 +3,6 @@
 namespace App\Exceptions;
 
 use App\Enums\HttpStatus;
-use App\Exceptions\ApiException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -16,10 +15,6 @@ use Throwable;
 
 class HandlerException
 {
-    public function __construct(
-        private readonly LoggerInterface $logger
-    ) {}
-
     public static function register(Exceptions $exceptions): void
     {
         static::registerReporters($exceptions);
@@ -28,9 +23,9 @@ class HandlerException
 
     public static function registerReporters(Exceptions $exceptions): void
     {
-        $exceptions->report(function (ApiException $e): bool {
+        $exceptions->report(function (ApiException $e, LoggerInterface $logger): bool {
             if ($e->status >= 400 && $e->status < 500) {
-                $this->logger->warning('API Client Error', [
+                $logger->warning('API Client Error', [
                     'message' => $e->getMessage(),
                     'status' => $e->status,
                     'errors' => $e->errors
@@ -38,7 +33,7 @@ class HandlerException
                 return false;
             }
 
-            $this->logger->error('API Server Error', [
+            app(LoggerInterface::class)->error('API Server Error', [
                 'message' => $e->getMessage(),
                 'status' => $e->status,
                 'errors' => $e->errors
@@ -47,13 +42,12 @@ class HandlerException
             return true;
         });
 
-        set_exception_handler(function (Throwable $e): void {
-
+        $exceptions->report(function (Throwable $e): void {
             if ($e instanceof ApiException) {
                 return;
             }
 
-            $this->logger->error('Unhandled Exception', [
+            app(LoggerInterface::class)->error('Unhandled Exception', [
                 'message' => $e->getMessage(),
                 'file' => $e->getFile(),
                 'line' => $e->getLine(),
