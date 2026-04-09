@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\{StoreMovieRequest, UpdateMovieRequest};
-use App\Http\Resources\{MovieListResource, MovieResource};
+use App\Http\Resources\{MovieCollection, MovieResource};
 use App\Services\Interfaces\Api\ApiMovieServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
@@ -15,18 +15,18 @@ class MovieController extends Controller
         private readonly ApiMovieServiceInterface $apiMovieService
     ) {}
 
-    public function index(): MovieListResource
+    public function index(): MovieCollection
     {
         $movies = $this->apiMovieService->getAllApi();
 
-        return new MovieListResource($movies);
+        return new MovieCollection($movies);
     }
 
-    public function trashed(): MovieListResource
+    public function trashed(): MovieCollection
     {
         $movies = $this->apiMovieService->getTrashed();
 
-        return new MovieListResource($movies);
+        return new MovieCollection($movies);
     }
 
     public function show(int $movieId): MovieResource
