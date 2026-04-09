@@ -18,7 +18,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/MovieCollection"
+                                    "$ref": "#/components/schemas/MoviesCollection"
                                 }
                             }
                         }
@@ -278,19 +278,6 @@
                 },
                 "type": "object"
             },
-            "MovieCollection": {
-                "title": "MovieCollection",
-                "description": "Collection of movies",
-                "properties": {
-                    "data": {
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/MovieResource"
-                        }
-                    }
-                },
-                "type": "object"
-            },
             "MovieResource": {
                 "properties": {
                     "title": {
@@ -320,6 +307,19 @@
                     "status": {
                         "type": "App\\Enums\\MovieStatus",
                         "example": "published"
+                    }
+                },
+                "type": "object"
+            },
+            "MoviesCollection": {
+                "title": "MoviesCollection",
+                "description": "Collection of movies",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MovieResource"
+                        }
                     }
                 },
                 "type": "object"
