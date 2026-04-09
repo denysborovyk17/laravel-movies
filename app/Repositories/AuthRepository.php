@@ -13,7 +13,7 @@ class AuthRepository implements AuthRepositoryInterface
         return User::create([
             'name' => $userDTO->getName(),
             'email' => $userDTO->getEmail(),
-            'password' => $userDTO->getPassword()
+            'password' => bcrypt($userDTO->getPassword())
         ]);
     }
 }

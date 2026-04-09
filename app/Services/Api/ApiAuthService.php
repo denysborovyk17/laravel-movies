@@ -7,7 +7,6 @@ use App\DTO\Auth\{LoginDto, RegisterDto};
 use App\Repositories\Interfaces\Api\ApiAuthRepositoryInterface;
 use App\Services\Interfaces\Api\ApiAuthServiceInterface;
 use Exception;
-use Illuminate\Support\Facades\Hash;
 
 class ApiAuthService implements ApiAuthServiceInterface
 {
@@ -34,7 +33,7 @@ class ApiAuthService implements ApiAuthServiceInterface
     {
         $user = $this->apiAuthRepository->login($userDTO);
 
-        if (!$user || !Hash::check($userDTO->getPassword(), $user->password)) {
+        if (!$user || !bcrypt($userDTO->getPassword(), $user->password)) {
             throw new InvalidCredentialsException('Invalid email or password');
         }
 
