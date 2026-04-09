@@ -1,0 +1,335 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "swagger",
+        "version": "1.0"
+    },
+    "paths": {
+        "/api/movies": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get a list of all movies",
+                "operationId": "f1b3cb64ae74885cdcf404eebe09485f",
+                "responses": {
+                    "200": {
+                        "description": "Get a list of all movies",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieCollection"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Create movie",
+                "operationId": "99aa988b99ecf68d2dced90d100bff63",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreMovieRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Get created movie",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/{id}": {
+            "get": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Get movie by ID",
+                "operationId": "0665e4e5eeb4738291d9733b6015218b",
+                "parameters": [
+                    {
+                        "parameter": "id",
+                        "name": "id",
+                        "in": "path",
+                        "description": "Get a single movie by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get a single movie by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Delete movie by ID",
+                "operationId": "5a935b66a9b9f91a7d9d2dad1a5a6a31",
+                "parameters": [
+                    {
+                        "parameter": "id",
+                        "name": "id",
+                        "in": "path",
+                        "description": "Delete a single movie by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Get a single movie by ID"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Update movie by ID",
+                "operationId": "5f29dc54707ba0310d35f0d82768f22c",
+                "parameters": [
+                    {
+                        "parameter": "id",
+                        "name": "id",
+                        "in": "path",
+                        "description": "Update a single movie by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/StoreMovieRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Get a single movie by ID",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/MovieResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/movies/{id}/force": {
+            "delete": {
+                "tags": [
+                    "Movies"
+                ],
+                "summary": "Force delete movie by ID",
+                "operationId": "93a2266527d197656210ea7d576a7975",
+                "parameters": [
+                    {
+                        "parameter": "id",
+                        "name": "id",
+                        "in": "path",
+                        "description": "Force delete a single movie by ID",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Get a single movie by ID"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "StoreMovieRequest": {
+                "required": [
+                    "title",
+                    "director",
+                    "description",
+                    "year",
+                    "genre",
+                    "rating",
+                    "status"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Movie title"
+                    },
+                    "director": {
+                        "type": "string",
+                        "example": "Movie director"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Movie description"
+                    },
+                    "year": {
+                        "type": "integer",
+                        "example": "2026"
+                    },
+                    "genre": {
+                        "type": "string",
+                        "example": "Movie genre"
+                    },
+                    "rating": {
+                        "type": "numeric",
+                        "example": "10"
+                    },
+                    "status": {
+                        "example": "published",
+                        "enum": [
+                            "draft",
+                            "archived",
+                            "published"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "UpdateMovieRequest": {
+                "required": [
+                    "title",
+                    "director",
+                    "description",
+                    "year",
+                    "genre",
+                    "rating",
+                    "status"
+                ],
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Movie title 1"
+                    },
+                    "director": {
+                        "type": "string",
+                        "example": "Movie director 1"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Movie description 1"
+                    },
+                    "year": {
+                        "type": "integer",
+                        "example": "2027"
+                    },
+                    "genre": {
+                        "type": "string",
+                        "example": "Movie genre 1"
+                    },
+                    "rating": {
+                        "type": "numeric",
+                        "example": "1"
+                    },
+                    "status": {
+                        "example": "published",
+                        "enum": [
+                            "draft",
+                            "archived",
+                            "published"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "MovieCollection": {
+                "title": "MovieCollection",
+                "description": "Collection of movies",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/MovieResource"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "MovieResource": {
+                "properties": {
+                    "title": {
+                        "type": "string",
+                        "example": "Movie title"
+                    },
+                    "director": {
+                        "type": "string",
+                        "example": "Movie director"
+                    },
+                    "description": {
+                        "type": "string",
+                        "example": "Movie description"
+                    },
+                    "year": {
+                        "type": "integer",
+                        "example": "2026"
+                    },
+                    "genre": {
+                        "type": "string",
+                        "example": "Movie genre"
+                    },
+                    "rating": {
+                        "type": "numeric",
+                        "example": "10"
+                    },
+                    "status": {
+                        "type": "App\\Enums\\MovieStatus",
+                        "example": "published"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Movies",
+            "description": "Movies"
+        }
+    ]
+}
