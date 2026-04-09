@@ -6,7 +6,7 @@ use App\Enums\HttpStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Movie;
 use App\Http\Requests\{StoreMovieRequest, UpdateMovieRequest};
-use App\Http\Resources\{MovieCollection, MovieResource};
+use App\Http\Resources\{MoviesCollection, MovieResource};
 use App\Services\Interfaces\Api\ApiMovieServiceInterface;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Gate;
@@ -27,23 +27,23 @@ class MovieController extends Controller
                 response: HttpStatus::OK->value,
                 description: 'Get a list of all movies',
                 content: new OA\JsonContent(
-                    ref: '#/components/schemas/MovieCollection'
+                    ref: '#/components/schemas/MoviesCollection'
                 )
             )
         ]
     )]
-    public function index(): MovieCollection
+    public function index(): MoviesCollection
     {
         $movies = $this->apiMovieService->getAllApi();
 
-        return new MovieCollection($movies);
+        return new MoviesCollection($movies);
     }
 
-    public function trashed(): MovieCollection
+    public function trashed(): MoviesCollection
     {
         $movies = $this->apiMovieService->getTrashed();
 
-        return new MovieCollection($movies);
+        return new MoviesCollection($movies);
     }
 
     #[OA\Get(

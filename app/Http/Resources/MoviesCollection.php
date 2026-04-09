@@ -7,7 +7,7 @@ use Illuminate\Http\Resources\Json\ResourceCollection;
 use OpenApi\Attributes as OA;
 
 #[OA\Schema(
-    title: 'MovieCollection',
+    title: 'MoviesCollection',
     description: 'Collection of movies',
     properties: [
         new OA\Property(
@@ -20,7 +20,7 @@ use OpenApi\Attributes as OA;
         )
     ]
 )]
-class MovieCollection extends ResourceCollection
+class MoviesCollection extends ResourceCollection
 {
     public function toArray(Request $request): array
     {
