@@ -6,7 +6,30 @@ use App\DTO\Admin\MovieDataDto;
 use App\Enums\MovieStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rules\Enum;
+use OpenApi\Attributes as OA;
 
+#[OA\Schema(
+    schema: 'StoreMovieRequest',
+    required: [
+        'title',
+        'director',
+        'description',
+        'year',
+        'genre',
+        'rating',
+        'status'
+    ],
+    properties: [
+        new OA\Property(property: 'title', type: 'string', example: 'Movie title'),
+        new OA\Property(property: 'director', type: 'string', example: 'Movie director'),
+        new OA\Property(property: 'description', type: 'string', example: 'Movie description'),
+        new OA\Property(property: 'year', type: 'integer', example: '2026'),
+        new OA\Property(property: 'genre', type: 'string', example: 'Movie genre'),
+        new OA\Property(property: 'rating', type: 'numeric', example: '10'),
+        new OA\Property(property: 'status', example: 'published', enum: MovieStatus::class),
+    ],
+    type: 'object'
+)]
 class StoreMovieRequest extends FormRequest
 {
     /**

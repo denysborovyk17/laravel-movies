@@ -57,6 +57,9 @@ class ApiMovieService implements ApiMovieServiceInterface
         return $movie;
     }
 
+    /**
+     * @throws MovieNotFoundException
+     */
     public function updateApi(MovieDataDto $movieDTO, int $movieId): Movie
     {
         $movie = $this->apiMovieRepository->findApi($movieId);
@@ -75,6 +78,9 @@ class ApiMovieService implements ApiMovieServiceInterface
         return $movie;
     }
 
+    /**
+     * @throws MovieNotFoundException
+     */
     public function softDeleteApi(int $movieId): void
     {
         $movie = $this->apiMovieRepository->findApi($movieId);
