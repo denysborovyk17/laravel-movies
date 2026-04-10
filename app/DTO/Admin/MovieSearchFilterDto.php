@@ -29,7 +29,7 @@ class MovieSearchFilterDto
 
     public function hasSearch(): bool
     {
-        return !empty($this->search);
+        return $this->search !== null && $this->search !== '';
     }
 
     public function hasStatus(): bool
